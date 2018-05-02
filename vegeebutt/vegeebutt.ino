@@ -1,4 +1,10 @@
 #include <Servo.h>
+
+struct xy {
+  float x;
+  float y;
+} xy;
+
 #define photo1 A8
 #define laser1 23
 
@@ -43,7 +49,6 @@ void setup() {
 
   gripper.attach(gripper_pwm);
   Serial.begin(9800);
-
 }
 
 void loop() {
@@ -52,6 +57,7 @@ void loop() {
   left(250);
   right(250);
   
+//  middle = scan();
 //  if(middle >= 30) {
 //    left(0);
 //    right(0);
@@ -60,10 +66,13 @@ void loop() {
 //    left(20);
 //    right(-20);
 //  }
-//   left(255);
 
 
-}
+// this works!
+//  struct xy current = {0,0};
+//  struct xy target = {1,1};
+//  Serial.println(get_heading(current, target));
+} 
 
 void left(int vel) {
   if (vel > 0) {
