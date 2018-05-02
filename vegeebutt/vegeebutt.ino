@@ -25,32 +25,22 @@ Servo gripper;
 #define button3 30
 #define button4 29
 
-typedef struct Loc_ {
+typedef struct State_ {
   float x;
   float y;
-} Loc; // Location
-
-void print_Loc(Loc loc) {
-  Serial.print("x: ");
-  Serial.print(loc.x);
-  Serial.print(", y: ");
-  Serial.println(loc.y);
-};
-
-typedef struct State_ {
-  Loc location;
   float heading;
 } State;
 
 //typedef struct state State;
 
 // global instance representing Robot state
-State CurrState = {{0, 0}, 79};
+volatile State CurrState = {0,0,70};
 
 void print_CurrState() {
   Serial.println("STATE:");
   Serial.print("\t");
-  print_Loc(CurrState.location);
+  Serial.print(CurrState.x);
+  Serial.print(CurrState.y);
   Serial.print("\theading: ");
   Serial.println(CurrState.heading);
 };
@@ -58,10 +48,10 @@ void print_CurrState() {
 // directional notation is relative to facing the board
 //   landscape when the BLUE circle is on the LEFT
 // calibration globals:
-const Loc bottom_left = {0,0};
-const Loc bottom_right = {0,0};
-const Loc top_left = {0,0};
-const Loc top_right = {0,0};
+const State bottom_left = {0,0,0};
+const State bottom_right = {0,0,0};
+const State top_left = {0,0,0};
+const State top_right = {0,0,0};
 const float heading_threshold = 1.0; // room for error for correcting heading
 
 float middle;
@@ -81,6 +71,7 @@ void setup() {
   pinMode(rmotor_pwm, OUTPUT);
   pinMode(rmotor_dir, OUTPUT);
 
+
   gripper.attach(gripper_pwm);
   Serial.begin(9800);
 }
@@ -98,6 +89,7 @@ void test_eric() { // test eric's stuff
     Serial.println(get_heading_difference(i));
   }
 }
+
 
 void test_sean() { // test sean's stuff
 //  middle = scan();

@@ -26,8 +26,8 @@ float get_heading_difference(float target_heading) {
 }
 
 // get heading relative to current heading to face target
-float get_heading_toward(Loc target) {
-  return 90.0 - rad_to_deg(atan((target.y - CurrState.location.y) / (target.x - CurrState.location.x)));
+float get_heading_toward(State target) {
+  return 90.0 - rad_to_deg(atan((target.y - CurrState.y) / (target.x - CurrState.x)));
 }
 
 float rad_to_deg(float rad) {
