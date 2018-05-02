@@ -1,28 +1,4 @@
-
-//
-//// TODO fix
-//void adjust_heading(Loc target) {
-//  float headf = get_heading(target);
-//  float headi = VState.heading
-//  float left;
-//  float right;
-//  
-//  if (abs(headf - headi) <= heading_threshold) {
-//    return;
-//  } else if (headf > headi) {
-//    left = 360 - headf + headi;
-//    right = headf - headi;
-//  } else if (headf < headi) {
-//    left = headi - headf;
-//    right = 360 - headi + headf;
-//  }
-//  
-//  if (left < right) {
-////    turn_left(left);
-//  } else {
-////    turn_right(right);
-//  }
-//}
+// Functions for calculations related to headings and coordinates.
 
 
 // This function returns the difference between the target_heading
@@ -49,6 +25,7 @@ float get_heading_difference(float target_heading) {
   }
 }
 
+// get heading relative to current heading to face target
 float get_heading_toward(Loc target) {
   return 90.0 - rad_to_deg(atan((target.y - VState.location.y) / (target.x - VState.location.x)));
 }
