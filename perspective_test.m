@@ -11,7 +11,7 @@ Y3 = 65;
 X4 = 56;
 Y4 = 70;
 
-%%lowercase letters represent 
+%%lowercase letters represent ideal location
 x1 = -72;
 x2 = 72;
 x3 = -72;

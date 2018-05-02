@@ -30,7 +30,7 @@ typedef struct Loc_ {
   float y;
 } Loc; // Location
 
-void printLoc(Loc loc) {
+void print_Loc(Loc loc) {
   Serial.print("x: ");
   Serial.print(loc.x);
   Serial.print(", y: ");
@@ -45,14 +45,14 @@ typedef struct State_ {
 //typedef struct state State;
 
 // global instance representing Robot state
-State VState = {{0, 0}, 79};
+State CurrState = {{0, 0}, 79};
 
-void printVState() {
+void print_CurrState() {
   Serial.println("STATE:");
   Serial.print("\t");
-  printLoc(VState.location);
+  print_Loc(CurrState.location);
   Serial.print("\theading: ");
-  Serial.println(VState.heading);
+  Serial.println(CurrState.heading);
 };
 
 // directional notation is relative to facing the board
@@ -91,7 +91,7 @@ void loop() {
 } 
 
 void test_eric() { // test eric's stuff
-//  printVState();
+//  printCurrState();
   for(int i = 0; i < 360; i++) {
     Serial.print(i);
     Serial.print(": ");
@@ -100,10 +100,10 @@ void test_eric() { // test eric's stuff
 }
 
 void test_sean() { // test sean's stuff
-  middle = scan();
-  gripper.write(100);
-  left(250);
-  right(250);
+//  middle = scan();
+//  gripper.write(100);
+//  left(250);
+//  right(250);
   
 //  middle = scan();
 //  if(middle >= 30) {
@@ -115,72 +115,3 @@ void test_sean() { // test sean's stuff
 //    right(-20);
 //  }
 }
-
-void left(int vel) {
-  if (vel > 0) {
-    analogWrite(lmotor_pwm, vel);
-    digitalWrite(lmotor_dir, LOW);
-  } else {
-    analogWrite(lmotor_pwm, -vel);
-    digitalWrite(lmotor_dir, HIGH);
-  }
-}
-
-void right(int vel) {
-  if (vel > 0) {
-    analogWrite(rmotor_pwm, vel);
-    digitalWrite(rmotor_dir, LOW);
-  } else {
-    analogWrite(rmotor_pwm, -vel);
-    digitalWrite(rmotor_dir, HIGH);
-  }
-}
-
-float scan() {
-
-  int high[3];
-  int low[3];
-  float average[3];
-  average[0] = 0;
-  average[1] = 0;
-  average[2] = 0;
-  for (int i = 0; i < 5; i++) {
-    digitalWrite(laser1, HIGH);
-    digitalWrite(laser2, HIGH);
-    digitalWrite(laser3, HIGH);
-    delay(30);
-    high[0] = analogRead(photo1);
-    high[1] = analogRead(photo2);
-    high[2] = analogRead(photo3);
-    digitalWrite(laser1, LOW);
-    digitalWrite(laser2, LOW);
-    digitalWrite(laser3, LOW);
-    delay(30);
-    low[0] = analogRead(photo1);
-    low[1] = analogRead(photo2);
-    low[2] = analogRead(photo3);
-    //    Serial.print(high);
-    //    Serial.print(" ");
-    //    Serial.println(low);
-    average[0] += (high[0] - low[0]);
-    average[1] += (high[1] - low[1]);
-    average[2] += (high[2] - low[2]);
-  }
-  average[0] = average[0] / 5.0;
-  average[1] = average[1] / 5.0;
-  average[2] = average[2] / 5.0;
-  Serial.print(average[0]);
-  Serial.print(' ');
-  Serial.print(average[1]);
-  Serial.print(' ');
-  Serial.println(average[2]);
-//  Serial.print(' ');
-  
-  if (average[0] >= 100) {
-    digitalWrite(led, HIGH);
-  } else {
-    digitalWrite(led, LOW);
-  }
-  return average[1];
-}
-

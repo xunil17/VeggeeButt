@@ -7,7 +7,7 @@
 // Returns the difference with the smallest magnitude.
 float get_heading_difference(float target_heading) {
   float headf = target_heading;
-  float headi = VState.heading;
+  float headi = CurrState.heading;
   float left, right;
   
   if (headf > headi) {
@@ -27,7 +27,7 @@ float get_heading_difference(float target_heading) {
 
 // get heading relative to current heading to face target
 float get_heading_toward(Loc target) {
-  return 90.0 - rad_to_deg(atan((target.y - VState.location.y) / (target.x - VState.location.x)));
+  return 90.0 - rad_to_deg(atan((target.y - CurrState.location.y) / (target.x - CurrState.location.x)));
 }
 
 float rad_to_deg(float rad) {
