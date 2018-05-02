@@ -1,10 +1,5 @@
 #include <Servo.h>
 
-struct xy {
-  float x;
-  float y;
-} xy;
-
 #define photo1 A8
 #define laser1 23
 
@@ -30,6 +25,45 @@ Servo gripper;
 #define button3 30
 #define button4 29
 
+typedef struct Loc_ {
+  float x;
+  float y;
+} Loc; // Location
+
+void printLoc(Loc loc) {
+  Serial.print("x: ");
+  Serial.print(loc.x);
+  Serial.print(", y: ");
+  Serial.println(loc.y);
+};
+
+typedef struct State_ {
+  Loc location;
+  float heading;
+} State;
+
+//typedef struct state State;
+
+// global instance representing Robot state
+State VState = {{0, 0}, 79};
+
+void printVState() {
+  Serial.println("STATE:");
+  Serial.print("\t");
+  printLoc(VState.location);
+  Serial.print("\theading: ");
+  Serial.println(VState.heading);
+};
+
+// directional notation is relative to facing the board
+//   landscape when the BLUE circle is on the LEFT
+// calibration globals:
+const Loc bottom_left = {0,0};
+const Loc bottom_right = {0,0};
+const Loc top_left = {0,0};
+const Loc top_right = {0,0};
+const float heading_threshold = 1.0; // room for error for correcting heading
+
 float middle;
 
 void setup() {
@@ -52,6 +86,20 @@ void setup() {
 }
 
 void loop() {
+//  test_eric();
+//  test_sean();
+} 
+
+void test_eric() { // test eric's stuff
+//  printVState();
+  for(int i = 0; i < 360; i++) {
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.println(get_heading_difference(i));
+  }
+}
+
+void test_sean() { // test sean's stuff
   middle = scan();
   gripper.write(100);
   left(250);
@@ -66,13 +114,7 @@ void loop() {
 //    left(20);
 //    right(-20);
 //  }
-
-
-// this works!
-//  struct xy current = {0,0};
-//  struct xy target = {1,1};
-//  Serial.println(get_heading(current, target));
-} 
+}
 
 void left(int vel) {
   if (vel > 0) {
