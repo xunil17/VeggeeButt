@@ -1,3 +1,4 @@
+#include <Servo.h>
 #define photo1 A8
 #define laser1 23
 
@@ -9,11 +10,19 @@
 
 #define led 13
 
-#define lmotor_pwm 5
-#define lmotor_dir 2
+#define lmotor_pwm 2
+#define lmotor_dir 3
 
 #define rmotor_pwm 4
-#define rmotor_dir 3
+#define rmotor_dir 5
+
+#define gripper_pwm 6
+Servo gripper;
+
+#define button1 32
+#define button2 31
+#define button3 30
+#define button4 29
 
 float middle;
 
@@ -32,21 +41,26 @@ void setup() {
   pinMode(rmotor_pwm, OUTPUT);
   pinMode(rmotor_dir, OUTPUT);
 
-
+  gripper.attach(gripper_pwm);
   Serial.begin(9800);
 
 }
 
 void loop() {
   middle = scan();
-  if(middle >= 30) {
-    left(0);
-    right(0);
-  }
-  else {
-    left(20);
-    right(-20);
-  }
+  gripper.write(100);
+  left(250);
+  right(250);
+  
+//  if(middle >= 30) {
+//    left(0);
+//    right(0);
+//  }
+//  else {
+//    left(20);
+//    right(-20);
+//  }
+//   left(255);
 
 
 }
@@ -111,7 +125,7 @@ float scan() {
   Serial.println(average[2]);
 //  Serial.print(' ');
   
-  if (average[1] >= 100) {
+  if (average[0] >= 100) {
     digitalWrite(led, HIGH);
   } else {
     digitalWrite(led, LOW);
