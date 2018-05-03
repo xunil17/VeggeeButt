@@ -1,3 +1,5 @@
+#include <Matrix.h>
+
 #include <Servo.h>
 
 #define photo1 A8
@@ -25,6 +27,11 @@ Servo gripper;
 #define button3 30
 #define button4 29
 
+typedef struct Point_ {
+  float x;
+  float y;
+} Point;
+
 typedef struct State_ {
   float x;
   float y;
@@ -34,7 +41,14 @@ typedef struct State_ {
 //typedef struct state State;
 
 // global instance representing Robot state
-volatile State CurrState = {0,0,70};
+volatile State CurrState = {0,0,0};
+
+void print_Point(Point p) {
+  Serial.print("x: ");
+  Serial.print(p.x);
+  Serial.print(", y: ");
+  Serial.println(p.y);
+};
 
 void print_CurrState() {
   Serial.println("STATE:");
@@ -48,12 +62,18 @@ void print_CurrState() {
 // directional notation is relative to facing the board
 //   landscape when the BLUE circle is on the LEFT
 // calibration globals:
-const State bottom_left = {0,0,0};
-const State bottom_right = {0,0,0};
-const State top_left = {0,0,0};
-const State top_right = {0,0,0};
-const float heading_threshold = 1.0; // room for error for correcting heading
+const Point BL = {-83,-81};
+const Point BR = {65,-68};
+const Point TL = {-87,65};
+const Point TR = {56,70};
+const float val = 72;
+const Point bl = {-val, -val};
+const Point br = {val, -val};
+const Point tl = {-val, val};
+const Point tr = {val, val};
 
+
+const float heading_threshold = 1.0; // room for error for correcting heading
 float middle;
 
 void setup() {
@@ -77,17 +97,18 @@ void setup() {
 }
 
 void loop() {
-//  test_eric();
+  test_eric();
 //  test_sean();
 } 
 
 void test_eric() { // test eric's stuff
-//  printCurrState();
-  for(int i = 0; i < 360; i++) {
-    Serial.print(i);
-    Serial.print(": ");
-    Serial.println(get_heading_difference(i));
-  }
+
+//  for(int i = 0; i < 360; i++) {
+//    Serial.print(i);
+//    Serial.print(": ");
+//    Serial.println(get_heading_difference(i));
+//  }
+  compute_vive_transformation();
 }
 
 
