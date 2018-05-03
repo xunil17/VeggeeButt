@@ -1,13 +1,17 @@
 %%capital letters represent data collected at four corners
+%bottom left
 X1 = -83;
 Y1 = -81;
 
+%bottom right
 X2 = 65;
 Y2 = -68;
 
+%top left
 X3 = -87;
 Y3 = 65;
 
+%top right
 X4 = 56;
 Y4 = 70;
 
@@ -44,7 +48,7 @@ new = [sol(1) sol(2) sol(3);
        sol(7) sol(8) 1]^-1;
 
 %input is the weird quadrilaterial that we get
-input = [20;50;1];
+input = [-10;0;1];
 
 %output is coordinates of new system
 out = new*input;
