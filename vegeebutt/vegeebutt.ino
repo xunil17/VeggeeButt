@@ -1,6 +1,7 @@
-#include <Matrix.h>
-
 #include <Servo.h>
+#include <BasicLinearAlgebra.h>
+
+using namespace BLA;
 
 #define photo1 A8
 #define laser1 23
@@ -102,13 +103,7 @@ void loop() {
 } 
 
 void test_eric() { // test eric's stuff
-
-//  for(int i = 0; i < 360; i++) {
-//    Serial.print(i);
-//    Serial.print(": ");
-//    Serial.println(get_heading_difference(i));
-//  }
-  compute_vive_transformation();
+  compute_transformed_coordinates({-10, 0});
 }
 
 
