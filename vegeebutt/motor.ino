@@ -4,10 +4,10 @@
 void move_left_motor(int vel) {
   if (vel > 0) {
     analogWrite(lmotor_pwm, vel);
-    digitalWrite(lmotor_dir, LOW);
+    digitalWrite(lmotor_dir, HIGH);
   } else {
     analogWrite(lmotor_pwm, -vel);
-    digitalWrite(lmotor_dir, HIGH);
+    digitalWrite(lmotor_dir, LOW);
   }
 }
 

@@ -1,5 +1,3 @@
-#include <Matrix.h>
-
 #include <Servo.h>
 
 #define photo1 A8
@@ -13,7 +11,7 @@
 
 #define led 13
 
-#define lmotor_pwm 2
+#define lmotor_pwm 9
 #define lmotor_dir 3
 
 #define rmotor_pwm 4
@@ -22,10 +20,10 @@
 #define gripper_pwm 6
 Servo gripper;
 
-#define button1 32
-#define button2 31
-#define button3 30
-#define button4 29
+//#define button1 32
+//#define button2 31
+//#define button3 30
+//#define button4 29
 
 typedef struct Point_ {
   float x;
@@ -84,6 +82,7 @@ void setup() {
   pinMode(laser3, OUTPUT);
   pinMode(photo3, INPUT);
   pinMode(led, OUTPUT);
+  digitalWrite(led, HIGH);
 
   pinMode(lmotor_pwm, OUTPUT);
   pinMode(lmotor_dir, OUTPUT);
@@ -97,8 +96,8 @@ void setup() {
 }
 
 void loop() {
-  test_eric();
-//  test_sean();
+//  test_eric();
+ test_sean();
 } 
 
 void test_eric() { // test eric's stuff
@@ -108,11 +107,14 @@ void test_eric() { // test eric's stuff
 //    Serial.print(": ");
 //    Serial.println(get_heading_difference(i));
 //  }
-  compute_vive_transformation();
+//  compute_vive_transformation();
 }
 
 
 void test_sean() { // test sean's stuff
+
+  move_left_motor(-200);
+  move_right_motor(-200);
 //  middle = scan();
 //  gripper.write(100);
 //  left(250);
