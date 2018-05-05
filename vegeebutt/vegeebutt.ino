@@ -104,30 +104,20 @@ void loop() {
 } 
 
 void test_eric() { // test eric's stuff
-<<<<<<< HEAD
-
-//  for(int i = 0; i < 360; i++) {
-//    Serial.print(i);
-//    Serial.print(": ");
-//    Serial.println(get_heading_difference(i));
-//  }
-//  compute_vive_transformation();
-=======
   compute_transformed_coordinates({-10, 0});
->>>>>>> 0f55afd0cb657b1cb27d688b1fd8ecb9b557f21b
 }
 
 
 void test_sean() { // test sean's stuff
 
-  move_left_motor(-200);
-  move_right_motor(-200);
+//  move_left_motor(-200);
+//  move_right_motor(-200);
 //  middle = scan();
 //  gripper.write(100);
 //  left(250);
 //  right(250);
   
-//  middle = scan();
+  middle = scan();
 //  if(middle >= 30) {
 //    left(0);
 //    right(0);
