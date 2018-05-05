@@ -23,10 +23,13 @@ using namespace BLA;
 #define gripper_pwm 6
 Servo gripper;
 
-//#define button1 32
-//#define button2 31
-//#define button3 30
-//#define button4 29
+#define button_front1 2
+#define button_front2 7
+#define button_gripper1 8
+#define button_gripper2 10
+
+#define vive1 14
+#define vive2 15
 
 typedef struct Point_ {
   float x;
@@ -39,10 +42,12 @@ typedef struct State_ {
   float heading;
 } State;
 
+float right;
+
 //typedef struct state State;
 
 // global instance representing Robot state
-volatile State CurrState = {0,0,0};
+volatile State CurrState = {0, 0, 0};
 
 void print_Point(Point p) {
   Serial.print("x: ");
@@ -63,14 +68,14 @@ void print_CurrState() {
 // directional notation is relative to facing the board
 //   landscape when the BLUE circle is on the LEFT
 // calibration globals:
-const Point BL = {-83,-81};
-const Point BR = {65,-68};
-const Point TL = {-87,65};
-const Point TR = {56,70};
+const Point BL = { -83, -81};
+const Point BR = {65, -68};
+const Point TL = { -87, 65};
+const Point TR = {56, 70};
 const float val = 72;
-const Point bl = {-val, -val};
+const Point bl = { -val, -val};
 const Point br = {val, -val};
-const Point tl = {-val, val};
+const Point tl = { -val, val};
 const Point tr = {val, val};
 
 
@@ -93,37 +98,41 @@ void setup() {
   pinMode(rmotor_pwm, OUTPUT);
   pinMode(rmotor_dir, OUTPUT);
 
+  pinMode(button_front1, INPUT);
+  pinMode(button_front2, INPUT);
+
+  pinMode(button_gripper1, INPUT);
+  pinMode(button_gripper2, INPUT);
+
 
   gripper.attach(gripper_pwm);
   Serial.begin(9800);
 }
 
 void loop() {
-//  test_eric();
- test_sean();
-} 
+  //  test_eric();
+  test_sean();
+
+}
 
 void test_eric() { // test eric's stuff
-  compute_transformed_coordinates({-10, 0});
+  compute_transformed_coordinates({ -10, 0});
 }
 
 
 void test_sean() { // test sean's stuff
 
-//  move_left_motor(-200);
-//  move_right_motor(-200);
-//  middle = scan();
-//  gripper.write(100);
-//  left(250);
-//  right(250);
-  
-  middle = scan();
-//  if(middle >= 30) {
-//    left(0);
-//    right(0);
-//  }
-//  else {
-//    left(20);
-//    right(-20);
-//  }
+  right = scan();
+  move_left_motor(50);
+  move_right_motor(-50);
+  if (right >= 100) {
+    while ((digitalRead(button_front1) == LOW) || (digitalRead(button_front2) == LOW)) {
+      move_left_motor(200);
+      move_right_motor(200);
+    }
+    move_left_motor(0);
+    move_right_motor(0);
+    delay(3000);
+  }
+
 }

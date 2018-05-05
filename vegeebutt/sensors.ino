@@ -38,11 +38,22 @@ float scan() {
   Serial.println(average[2]);
 //  Serial.print(' ');
   
-  if (average[0] >= 100) {
+  if (average[2] >= 100) {
     digitalWrite(led, HIGH);
   } else {
     digitalWrite(led, LOW);
   }
-  return average[1];
+  return average[2];
+}
+
+void front_bumper() {
+  if((digitalRead(button_front1) == HIGH) || (digitalRead(button_front2) == HIGH)) {
+    digitalWrite(led, HIGH);
+    move_left_motor(0);
+    move_right_motor(0);
+    delay(1000);
+  } else {
+    digitalWrite(led, LOW);
+  }
 }
 
