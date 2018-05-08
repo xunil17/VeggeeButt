@@ -31,11 +31,11 @@ float scan() {
   average[0] = average[0] / 5.0;
   average[1] = average[1] / 5.0;
   average[2] = average[2] / 5.0;
-  Serial.print(average[0]);
-  Serial.print(' ');
-  Serial.print(average[1]);
-  Serial.print(' ');
-  Serial.println(average[2]);
+//  Serial.print(average[0]);
+//  Serial.print(' ');
+//  Serial.print(average[1]);
+//  Serial.print(' ');
+//  Serial.println(average[2]);
 //  Serial.print(' ');
   
   if (average[2] >= 100) {

@@ -5,7 +5,8 @@ using namespace BLA;
 
 enum Block {
   Cube,
-  Cylinder
+  Cylinder,
+  None
 };
 
 #define photo1 A8
@@ -90,6 +91,8 @@ const Point tr = {val, val};
 const float heading_threshold = 1.0; // room for error for correcting heading
 float middle;
 
+volatile bool hit = false;
+
 void setup() {
   pinMode(laser1, OUTPUT);
   pinMode(photo1, INPUT);
@@ -108,12 +111,15 @@ void setup() {
   pinMode(rmotor_pwm, OUTPUT);
   pinMode(rmotor_dir, OUTPUT);
 
-  pinMode(button_front1, INPUT);
-  pinMode(button_front2, INPUT);
+  pinMode(button_front1, INPUT_PULLUP);
+  pinMode(button_front2, INPUT_PULLUP);
 
   pinMode(button_gripper1, INPUT);
   pinMode(button_gripper2, INPUT);
 
+
+  attachInterrupt(digitalPinToInterrupt(button_front1), ISR_button, RISING);
+  attachInterrupt(digitalPinToInterrupt(button_front2), ISR_button, RISING);
 
   gripper.attach(gripper_pwm);
   open_gripper_max();
@@ -122,11 +128,22 @@ void setup() {
 
 void loop() {
   plan();
+}
 
+void ISR_button() {
+  stop_robot();
+  hit = true;
 }
 
 void test_eric() { // test eric's stuff
-  compute_transformed_coordinates({ -10, 0});
+  Serial.print("Cylinder, Cube, None: ");
+  Serial.print(Cylinder);
+  Serial.print(", ");
+  Serial.print(Cube);
+  Serial.print(", ");
+  Serial.println(None);
+  Serial.print("grab and identify: ");
+  Serial.println(grab_and_identify());
 }
 
 

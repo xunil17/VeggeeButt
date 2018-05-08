@@ -1,5 +1,4 @@
-#define min_dist 95
-
+#define min_dist 90
 //turning the screw left makes the claw close
 //turing the screw right makes the claw open
 
@@ -34,17 +33,24 @@ void move_gripper(int dist) {
   }
 }
 
-int grab_and_identify() {
+Block grab_and_identify() {
   open_gripper_max();
   delay(1000);
-  move_gripper(230);
-  if(digitalRead(button_gripper1) == LOW || digitalRead(button_gripper2) == LOW) {
-    turn_robot(75);
-  }
-  delay(2000);
-  stop_robot(); 
+  move_gripper(210);
+  if(gripper_gripped()) {
+    return Cylinder;
+  } 
 
-  return 0;
+  move_gripper(300);
+  if(gripper_gripped()) {
+    return Cube;
+  }
+
+  return None;
+}
+
+bool gripper_gripped() {
+  return digitalRead(button_gripper1) == LOW || digitalRead(button_gripper2) == LOW;
 }
 
 //opens gripper to max width
