@@ -47,7 +47,7 @@ float scan() {
 }
 
 void front_bumper() {
-  if((digitalRead(button_front1) == HIGH) || (digitalRead(button_front2) == HIGH)) {
+  if((digitalRead(button_front1) == LOW) && (digitalRead(button_front2) == LOW)) {
     digitalWrite(led, HIGH);
     move_left_motor(0);
     move_right_motor(0);
@@ -56,4 +56,14 @@ void front_bumper() {
     digitalWrite(led, LOW);
   }
 }
+
+void gripper_bumper() {
+  if((digitalRead(button_gripper1) == LOW) && (digitalRead(button_gripper1) == LOW)) {
+    digitalWrite(led, HIGH);
+  } else {
+    digitalWrite(led, LOW);
+  }
+}
+
+
 

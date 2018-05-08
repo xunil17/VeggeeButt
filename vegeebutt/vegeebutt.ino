@@ -12,6 +12,8 @@ using namespace BLA;
 #define photo3 A4
 #define laser3 19
 
+#define ir_pin A2
+
 #define led 13
 
 #define lmotor_pwm 9
@@ -28,8 +30,8 @@ Servo gripper;
 #define button_gripper1 8
 #define button_gripper2 10
 
-#define vive1 14
-#define vive2 15
+#define vive1 15
+#define vive2 14
 
 typedef struct Point_ {
   float x;
@@ -92,6 +94,8 @@ void setup() {
   pinMode(led, OUTPUT);
   digitalWrite(led, HIGH);
 
+  pinMode(ir_pin, INPUT);
+
   pinMode(lmotor_pwm, OUTPUT);
   pinMode(lmotor_dir, OUTPUT);
 
@@ -106,12 +110,29 @@ void setup() {
 
 
   gripper.attach(gripper_pwm);
+  open_gripper_max();
+  gripper.write(90);
   Serial.begin(9800);
 }
 
 void loop() {
   //  test_eric();
-  test_sean();
+//   test_sean();
+//  move_left_motor(30);
+//  move_right_motor(-30);
+//  Serial.print(digitalRead(button_gripper1));
+//  Serial.println(digitalRead(button_gripper2));
+//  delay(10);
+//  right = scan();
+//gripper.write(80);
+////gripper_bumper();
+//Serial.println(analogRead(ir_pin));
+//   close_gripper();
+   grab_and_identify();
+   
+   delay(1000);
+   open_gripper_max();
+
 
 }
 
@@ -123,12 +144,12 @@ void test_eric() { // test eric's stuff
 void test_sean() { // test sean's stuff
 
   right = scan();
-  move_left_motor(50);
-  move_right_motor(-50);
-  if (right >= 100) {
-    while ((digitalRead(button_front1) == LOW) || (digitalRead(button_front2) == LOW)) {
-      move_left_motor(200);
-      move_right_motor(200);
+  move_left_motor(25);
+  move_right_motor(-25);
+  if (right >= 100) { //if it sees block
+    while ((digitalRead(button_front1) == LOW) && (digitalRead(button_front2) == LOW)) {
+      move_left_motor(150);
+      move_right_motor(150);
     }
     move_left_motor(0);
     move_right_motor(0);
