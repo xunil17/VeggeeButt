@@ -17,7 +17,7 @@ void move_gripper(int dist) {
     int i;
     gripper.write(90);
   } else {
-    float dif = get_dist_avg() - dist;
+    float dif = get_dist() - dist;
     while (abs(dif) > 1) {
       if (dif > 0) { //positive means we need to open gripper
         gripper.write(82);
@@ -26,7 +26,7 @@ void move_gripper(int dist) {
         gripper.write(98); //close gripper
         //Serial.println("close gripper");
       }
-      dif = get_dist_avg() - dist;
+      dif = get_dist() - dist;
 //      Serial.println(dif);
       //      Serial.println(dif);
     }
@@ -43,6 +43,8 @@ int grab_and_identify() {
   }
   delay(2000);
   stop_robot(); 
+
+  return 0;
 }
 
 //opens gripper to max width
@@ -50,16 +52,11 @@ void open_gripper_max() {
   move_gripper(min_dist); //move gripper to this position
 }
 
-int get_dist() {
-  return analogRead(ir_pin);
-}
-
-float get_dist_avg() {
+float get_dist() {
   int i;
-  float dif;
   float avg = 0;
   for (i = 0; i < 5; i++) {
-    avg += get_dist();
+    avg += analogRead(ir_pin);
   }
   return avg/5;
 }

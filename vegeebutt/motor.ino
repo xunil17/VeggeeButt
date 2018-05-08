@@ -35,6 +35,19 @@ void move_right_motor(int vel) {
   move_right_motor(spd);
   }*/
 
+void move_forward(int vel) {
+  move_left_motor(vel);
+  move_right_motor(vel);
+}
+
+void turn_left() {
+  turn_robot(-25);
+}
+
+void turn_right() {
+  turn_robot(25);
+}
+
 //turns the robot (-255 to 0) is turn left and (0 to 255) is turn right
 void turn_robot(int vel) {
   move_left_motor(vel);

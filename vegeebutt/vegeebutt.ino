@@ -3,6 +3,11 @@
 
 using namespace BLA;
 
+enum Block {
+  Cube,
+  Cylinder
+};
+
 #define photo1 A8
 #define laser1 23
 
@@ -33,6 +38,8 @@ Servo gripper;
 #define vive1 15
 #define vive2 14
 
+#define scan_threshold 100
+
 typedef struct Point_ {
   float x;
   float y;
@@ -44,7 +51,6 @@ typedef struct State_ {
   float heading;
 } State;
 
-float right;
 
 //typedef struct state State;
 
@@ -115,35 +121,7 @@ void setup() {
 }
 
 void loop() {
-  //  test_eric();
-//   test_sean();
-//  Serial.print(digitalRead(button_gripper1));
-//  Serial.println(digitalRead(button_gripper2));
-//  delay(10);
-//  right = scan();
-//gripper.write(80);
-////gripper_bumper();
-//Serial.print(analogRead(ir_pin));
-//Serial.print(" ");
-//Serial.println(get_dist());
-
-grab_and_identify();
-
-
-//move_gripper(200);
-//delay(1000);
-//move_gripper(130);
-//delay(1000);
-
-//  gripper.write(100);
-//  delay(100);
-//   close_gripper();
-//   grab_and_identify();
-   
-//   delay(1000);
-//  move_gripper(90);
-//   open_gripper_max();
-
+  plan();
 
 }
 
@@ -154,17 +132,17 @@ void test_eric() { // test eric's stuff
 
 void test_sean() { // test sean's stuff
 
-  right = scan();
-  move_left_motor(25);
-  move_right_motor(-25);
-  if (right >= 100) { //if it sees block
-    while ((digitalRead(button_front1) == LOW) && (digitalRead(button_front2) == LOW)) {
-      move_left_motor(150);
-      move_right_motor(150);
-    }
-    move_left_motor(0);
-    move_right_motor(0);
-    delay(3000);
-  }
+//  right = scan();
+//  move_left_motor(25);
+//  move_right_motor(-25);
+//  if (right >= 100) { //if it sees block
+//    while ((digitalRead(button_front1) == LOW) && (digitalRead(button_front2) == LOW)) {
+//      move_left_motor(150);
+//      move_right_motor(150);
+//    }
+//    move_left_motor(0);
+//    move_right_motor(0);
+//    delay(3000);
+//  }
 
 }

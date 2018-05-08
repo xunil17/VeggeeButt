@@ -8,7 +8,8 @@
 float get_heading_difference(float target_heading) {
   float headf = target_heading;
   float headi = CurrState.heading;
-  float left, right;
+  float left = -1;
+  float right = -1;
   
   if (headf > headi) {
     left = 360 - headf + headi;
