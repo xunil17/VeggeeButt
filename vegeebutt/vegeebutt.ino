@@ -111,27 +111,38 @@ void setup() {
 
   gripper.attach(gripper_pwm);
   open_gripper_max();
-  gripper.write(90);
   Serial.begin(9800);
 }
 
 void loop() {
   //  test_eric();
 //   test_sean();
-//  move_left_motor(30);
-//  move_right_motor(-30);
 //  Serial.print(digitalRead(button_gripper1));
 //  Serial.println(digitalRead(button_gripper2));
 //  delay(10);
 //  right = scan();
 //gripper.write(80);
 ////gripper_bumper();
-//Serial.println(analogRead(ir_pin));
+//Serial.print(analogRead(ir_pin));
+//Serial.print(" ");
+//Serial.println(get_dist());
+
+grab_and_identify();
+
+
+//move_gripper(200);
+//delay(1000);
+//move_gripper(130);
+//delay(1000);
+
+//  gripper.write(100);
+//  delay(100);
 //   close_gripper();
-   grab_and_identify();
+//   grab_and_identify();
    
-   delay(1000);
-   open_gripper_max();
+//   delay(1000);
+//  move_gripper(90);
+//   open_gripper_max();
 
 
 }
