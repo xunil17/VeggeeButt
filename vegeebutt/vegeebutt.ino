@@ -5,8 +5,6 @@
 #include <math.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#define Vive1PIN 19 // the signal from the sensor
-#define Vive2PIN 2 // the signal from the sensor
 #define DEG_PER_US 0.0216 // equal to (180 deg) / (8333 us)
 #define DEG_TO_RADIAN 0.0174533 // pi/180
 #define LIGHTHOUSEHEIGHT 3.5 // in feet
@@ -168,8 +166,6 @@ void setup() {
 }
 
 void loop() {
-  static int i = 0; // keep track of time
-  char message[30];
 
 //  Serial.println(V2.useMe);
   if (V1.useMe == 1) {
