@@ -108,6 +108,7 @@ Point compute_transformed_coordinates(Point input) {
     sol(0,0), sol(1,0), sol(2,0), sol(3,0), sol(4,0), sol(5,0), sol(6,0), sol(7,0), 1
   };
 
+  //save this matrix so we don't have to calculate it every time
   BLA::Matrix<3,3> new_sol_inv = new_sol.Inverse();
 
   BLA::Matrix<3,1> input_mat = {

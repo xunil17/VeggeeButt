@@ -11,9 +11,7 @@
 
 //moves gripper until at dist
 void move_gripper(int dist) {
-
   if (dist > 600 || dist < min_dist) {
-    int i;
     gripper.write(90);
   } else {
     float dif = get_dist() - dist;
