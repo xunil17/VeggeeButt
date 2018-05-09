@@ -41,11 +41,11 @@ void move_forward(int vel) {
 }
 
 void turn_left() {
-  turn_robot(-20);
+  turn_robot(-25);
 }
 
 void turn_right() {
-  turn_robot(20);
+  turn_robot(25);
 }
 
 //turns the robot (-255 to 0) is turn left and (0 to 255) is turn right
