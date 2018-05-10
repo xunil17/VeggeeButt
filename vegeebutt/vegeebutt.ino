@@ -8,22 +8,22 @@
 #define DEG_PER_US 0.0216 // equal to (180 deg) / (8333 us)
 #define DEG_TO_RADIAN 0.0174533 // pi/180
 #define LIGHTHOUSEHEIGHT 3.5 // in feet
-#define LIGHTHOUSEANGLE 30 // in degrees
+#define LIGHTHOUSEANGLE 33 // in degrees
 
 // structure to store the sensor data
 typedef struct {
   unsigned long changeTime[11];
-  double horzAng;
-  double vertAng;
+  float horzAng;
+  float vertAng;
   int useMe;
   int collected;
 } viveSensor;
 
 // variables for the sensor data and filter
 volatile viveSensor V1, V2;
-volatile double xPos1, yPos1, xPos2, yPos2;
-volatile double xOld1 = 0, yOld1 = 0, xFilt1 = 0, yFilt1 = 0;
-volatile double xOld2 = 0, yOld2 = 0, xFilt2 = 0, yFilt2 = 0;
+volatile float xPos1, yPos1, xPos2, yPos2;
+volatile float xOld1 = 0, yOld1 = 0, xFilt1 = 0, yFilt1 = 0;
+volatile float xOld2 = 0, yOld2 = 0, xFilt2 = 0, yFilt2 = 0;
 
 using namespace BLA;
 
@@ -33,16 +33,16 @@ enum Block {
   None
 };
 
-enum Plan {
-  LookForBlock,
-  GoToBlock,
-  GrabAndIdentifyBlock,
-  LookForGoal,
-  GoToGoal,
-  DropBlock,
-  LookForReset,
-  GoToReset
-}
+//enum Plan {
+//  LookForBlock,
+//  GoToBlock,
+//  GrabAndIdentifyBlock,
+//  LookForGoal,
+//  GoToGoal,
+//  DropBlock,
+//  LookForReset,
+//  GoToReset
+//};
 
 #define photo1 A8
 #define laser1 23
@@ -101,9 +101,10 @@ void print_Point(Point p) {
 };
 
 void print_CurrState() {
-  Serial.println("STATE:");
+  Serial.print("STATE:");
   Serial.print("\t");
   Serial.print(CurrState.x);
+  Serial.print(", ");
   Serial.print(CurrState.y);
   Serial.print("\theading: ");
   Serial.println(CurrState.heading);
@@ -112,15 +113,21 @@ void print_CurrState() {
 // directional notation is relative to facing the board
 //   landscape when the BLUE circle is on the LEFT
 // calibration globals:
-const Point BL = { -83, -81};
-const Point BR = {65, -68};
-const Point TL = { -87, 65};
-const Point TR = {56, 70};
-const float val = 72;
-const Point bl = { -val, -val};
-const Point br = {val, -val};
-const Point tl = { -val, val};
-const Point tr = {val, val};
+const Point BLCAL = { 0.84, -4.75};
+const Point BRCAL = { 15.98, -3.3};
+const Point TLCAL = { 0.72, 4.74 };
+const Point TRCAL = { 15.30, 4.23 };
+
+const Point BL = { 0, 0 };
+const Point BR = { BRCAL.x - BLCAL.x, BRCAL.y - BLCAL.y };
+const Point TL = { TLCAL.x - BLCAL.x, TLCAL.y - BLCAL.y };
+const Point TR = { TRCAL.x - BLCAL.x, TRCAL.y - BLCAL.y };
+const float valx = 12;
+const float valy = 6;
+const Point bl = { 0, 0 };
+const Point br = { valx, 0 };
+const Point tl = { 0, valy};
+const Point tr = { valx, valy };
 
 const BLA::Matrix<8,8> A= {
   bl.x, bl.y, 1, 0, 0, 0, -BL.x * bl.x, -BL.x * bl.y,
@@ -178,7 +185,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(button_front2), ISR_button, RISING);
 
   gripper.attach(gripper_pwm);
-//  open_gripper_max();
+  open_gripper_max();
 
     // vive
   V1.horzAng = 0;
@@ -199,6 +206,7 @@ void setup() {
 
 void loop() {
   test_eric();
+//  plan();
 }
 
 void ISR_button() {
@@ -208,17 +216,22 @@ void ISR_button() {
 
 void test_eric() { // test eric's stuff
   update_vive();
-  Serial.print("V1: ");
-  Serial.print(xFilt1);
-  Serial.print(" ");
-  Serial.print(yFilt1);
+//  Serial.print("V1: ");
+//  Serial.print(xFilt1);
+//  Serial.print(" ");
+//  Serial.print(yFilt1);
   
-  Serial.print(", V2: ");
-  Serial.print(xFilt2);
-  Serial.print(" ");
-  Serial.println(yFilt2);
-
-  delay(2000);
+//  Serial.print(", V2: ");
+//  Serial.print(xFilt2);
+//  Serial.print(" ");
+//  Serial.println(yFilt2);
+//  print_Point(compute_transformed_coordinates(read_front()));
+//  print_CurrState();
+  turn_to_target({1.7,-2.38});
+  
+//  Serial.println(get_heading_toward({1.7,-2.38}));
+//  print_CurrState();
+  delay(100);
 }
 
 

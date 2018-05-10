@@ -58,22 +58,3 @@ void stop_robot() {
   move_left_motor(0);
   move_right_motor(0);
 }
-
-void turn_to_heading(float target_heading) {
-  float u;
-  float eint = 0;
-  float kp = 0.829;
-  float ki = 0.2;
-  float heading_diff = get_heading_difference(target_heading);
-  while (heading_diff > 3) {
-    eint = eint + heading_diff; //error sum
-    if (eint > EINTMAX) {
-      eint = EINTMAX;
-    } else if (eint < -EINTMAX) {
-      eint = -EINTMAX;
-    }
-    u = kp * heading_diff + ki * eint;
-    turn_robot((int)u);
-    heading_diff = get_heading_difference(target_heading);
-  }
-}

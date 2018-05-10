@@ -24,12 +24,16 @@ void find_and_go_to_block() {
 
     // move toward block unless it moves out of sight
     do {
+      update_vive(); // update vive periodically for accurate coordinates
       move_forward(120);
       
       // stop when block is within our grasp
       if (hit) {
         stop_robot();
         hit = false;
+        move_forward(30);
+        delay(100);
+        stop_robot();
         Block block_type = grab_and_identify();
         handle_block(block_type);
         return;
@@ -55,13 +59,45 @@ void handle_block(Block type) {
 void handle_cylinder() {
   move_forward(10);
   move_gripper(220); // tighten grip on slipper cylinder
-  turn_robot(100);
-  delay(2000);
+  turn_robot(-60);
+  delay(5000);
 }
 
 void handle_cube() {
-  turn_robot(-50);
-  delay(2000);
+  turn_robot(50);
+  delay(5000);
+}
+
+void turn_to_target(Point target) {
+  float u;
+  float eint = 0;
+  float kp = 0.8;
+//  float ki = 0.2;
+  float target_heading = get_heading_toward(target);
+  float heading_diff = get_heading_difference(target_heading);
+  while (abs(heading_diff) > 3) {
+    update_vive();
+//    eint = eint + heading_diff; //error sum
+//    if (eint > EINTMAX) {
+//      eint = EINTMAX;
+//    } else if (eint < -EINTMAX) {
+//      eint = -EINTMAX;
+//    }
+//    u = kp * heading_diff + ki * eint;
+    u = kp * heading_diff;
+    turn_robot((int)u);
+//    print_CurrState();
+    Serial.print(CurrState.heading);
+    Serial.print(" ");
+    Serial.print(heading_diff);
+    Serial.print(" ");
+    Serial.print(target_heading);
+    Serial.print(" ");
+    Serial.println(u);
+    target_heading = get_heading_toward(target);
+    heading_diff = get_heading_difference(target_heading);
+  }
+  Serial.println("Finished!");
 }
 
 //bool front_bumped() {
