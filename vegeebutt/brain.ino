@@ -2,6 +2,7 @@
 
 void plan() {
   Serial.println("Entering plan()");
+  //open_gripper_max();
   find_and_go_to_block(); // look for and get to the block
   
 //  Block block_type = grab_and_identify();
@@ -15,8 +16,8 @@ void plan() {
 }
 
 void find_and_go_to_block() {
-  Serial.println("Entering find_and_go_to_block()");
-  open_gripper_max(); // reset gripper before trying to find other stuff
+//  Serial.println("Entering find_and_go_to_block()");
+//  open_gripper_max(); // reset gripper before trying to find other stuff
   turn_right(); // turn right by default
   if (block_seen()) {
     delay(50);
@@ -60,7 +61,8 @@ void handle_block(Block type) {
 //    Serial.println("Found Cube!");
 //    handle_cube();
   } else {
-//    Serial.println("Found None.");
+    Serial.println("Found None.");
+    open_gripper_max();
     return;
   }
 }
@@ -117,7 +119,7 @@ void go_to_target(Point target) {
 }
 
 void turn_to_target(Point target) {
-  float min_u = 20;
+  float min_u = 30;
   float u;
 //  float eint = 0;
   float kp = 0.4;

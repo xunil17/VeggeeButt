@@ -208,6 +208,7 @@ void setup() {
 
 void loop() {
 //  test_eric();
+//    test_sean();
   plan();
 }
 
@@ -237,6 +238,8 @@ void test_eric() { // test eric's stuff
 
 
 void test_sean() { // test sean's stuff
+    Serial.println(grab_and_identify());
+    delay(1000);
 
 //  right = scan();
 //  move_left_motor(25);
@@ -250,11 +253,6 @@ void test_sean() { // test sean's stuff
 //    move_right_motor(0);
 //    delay(3000);
 //  }
-
-
-  static int i = 0; // keep track of time
-  char message[30];
-
 //  Serial.println(V2.useMe);
 
 }

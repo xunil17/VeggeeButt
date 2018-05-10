@@ -1,4 +1,4 @@
-#define min_dist 90
+#define min_dist 120
 //turning the screw left makes the claw close
 //turing the screw right makes the claw open
 
@@ -15,17 +15,15 @@ void move_gripper(int dist) {
     gripper.write(90);
   } else {
     float dif = get_dist() - dist;
-    while (abs(dif) > 1) {
+    unsigned long start_time = millis();
+    while (abs(dif) > 1 || millis() - start_time < 3000) {
       if (dif > 0) { //positive means we need to open gripper
         gripper.write(82);
-        //Serial.println("open gripper");
       } else {
         gripper.write(98); //close gripper
-        //Serial.println("close gripper");
       }
       dif = get_dist() - dist;
-//      Serial.println(dif);
-      //      Serial.println(dif);
+      
     }
     gripper.write(90);
   }
