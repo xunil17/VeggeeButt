@@ -1,3 +1,4 @@
+#define EINTMAX 360
 
 void plan() {
   Serial.println("Entering plan()");
@@ -42,40 +43,88 @@ void find_and_go_to_block() {
   }
 }
 
+void find_and_go_to_goal() {
+  go_to_target(Goal1);
+  stop_robot();
+  open_gripper_max();
+  delay(1000000);
+}
+
 void handle_block(Block type) {
   Serial.println("Entering handle_block()");
   if (type == Cylinder) {
-    Serial.println("Found Cylinder!");
+//    Serial.println("Found Cylinder!");
     handle_cylinder();
   } else if (type == Cube) {
-    Serial.println("Found Cube!");
-    handle_cube();
+    find_and_go_to_goal();
+//    Serial.println("Found Cube!");
+//    handle_cube();
   } else {
-    Serial.println("Found None.");
+//    Serial.println("Found None.");
     return;
   }
 }
 
 void handle_cylinder() {
-  move_forward(10);
   move_gripper(220); // tighten grip on slipper cylinder
-  turn_robot(-60);
-  delay(5000);
+  
 }
 
 void handle_cube() {
-  turn_robot(50);
+  find_and_go_to_goal();
+}
+
+void go_to_target(Point target) {
+  float min_u = 70;
+  int vel = 70;
+  float u;
+  float kp = 0.5;
+  float target_heading = get_heading_toward(target);
+  float heading_diff = get_heading_difference(target_heading);
+  float dist = get_distance_between_points(target,{CurrState.x,CurrState.y});
+  while (abs(dist) > 0.6) {
+    update_vive();
+    u = kp * heading_diff;
+    if(abs(heading_diff) > 15) {
+      turn_to_target(target);
+    } else if (heading_diff <= 0) { //turn left a little, spin left motor faster than right motor
+      move_left_motor(vel+u);
+      move_right_motor(vel-u);
+    } else if (heading_diff > 0) { //turn right a little, spin right motor faster than left motor
+      move_left_motor(vel-u);
+      move_right_motor(vel+u);
+    }
+//    turn_robot((int)u);
+//    print_CurrState();
+
+    
+//    Serial.print(eint);
+//    Serial.print(dist);
+//    Serial.print(" ");
+//    Serial.print(CurrState.heading);
+//    Serial.print(" ");
+//    Serial.print(heading_diff);
+//    Serial.print(" ");
+//    Serial.print(target_heading);
+//    Serial.print(" ");
+//    Serial.println(u);
+    target_heading = get_heading_toward(target);
+    heading_diff = get_heading_difference(target_heading);
+    dist = get_distance_between_points(target,{CurrState.x,CurrState.y});
+  }
+  stop_robot();
   delay(5000);
 }
 
 void turn_to_target(Point target) {
+  float min_u = 20;
   float u;
-  float eint = 0;
-  float kp = 0.8;
+//  float eint = 0;
+  float kp = 0.4;
 //  float ki = 0.2;
   float target_heading = get_heading_toward(target);
   float heading_diff = get_heading_difference(target_heading);
-  while (abs(heading_diff) > 3) {
+  while (abs(heading_diff) > 5) {
     update_vive();
 //    eint = eint + heading_diff; //error sum
 //    if (eint > EINTMAX) {
@@ -83,10 +132,19 @@ void turn_to_target(Point target) {
 //    } else if (eint < -EINTMAX) {
 //      eint = -EINTMAX;
 //    }
-//    u = kp * heading_diff + ki * eint;
+////    u = kp * heading_diff + ki * eint;
     u = kp * heading_diff;
+    if (u < 0) {
+      u -= min_u;
+    } else {
+      u += min_u;
+    }
     turn_robot((int)u);
 //    print_CurrState();
+
+    
+//    Serial.print(eint);
+////    Serial.print(" ");
     Serial.print(CurrState.heading);
     Serial.print(" ");
     Serial.print(heading_diff);
@@ -97,26 +155,11 @@ void turn_to_target(Point target) {
     target_heading = get_heading_toward(target);
     heading_diff = get_heading_difference(target_heading);
   }
-  Serial.println("Finished!");
 }
-
-//bool front_bumped() {
-//  Serial.print(bumped_left());
-//  Serial.print(" ");
-//  Serial.println(bumped_right());
-//  return bumped_left() || bumped_right();
-//}
-//
-//bool bumped_left() {
-//  return digitalRead(button_front1) == HIGH;
-//}
-//
-//bool bumped_right() {
-//  return digitalRead(button_front2) == HIGH;
-//}
 
 bool block_seen() {
   float scan_result = scan();
   return scan_result >= scan_threshold;
 }
+
 

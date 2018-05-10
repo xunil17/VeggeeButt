@@ -1,4 +1,3 @@
-#define EINTMAX 360
 
 //drives the left motor forward or backward (-255 to 255)
 void move_left_motor(int vel) {

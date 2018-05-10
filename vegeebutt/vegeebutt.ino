@@ -156,6 +156,8 @@ float middle;
 
 volatile bool hit = false;
 
+const Point Goal1 = {1.7, -2.38};
+
 void setup() {
   pinMode(laser1, OUTPUT);
   pinMode(photo1, INPUT);
@@ -205,8 +207,8 @@ void setup() {
 }
 
 void loop() {
-  test_eric();
-//  plan();
+//  test_eric();
+  plan();
 }
 
 void ISR_button() {
@@ -216,6 +218,8 @@ void ISR_button() {
 
 void test_eric() { // test eric's stuff
   update_vive();
+  
+//  turn_to_target(Goal1);
 //  Serial.print("V1: ");
 //  Serial.print(xFilt1);
 //  Serial.print(" ");
@@ -227,10 +231,7 @@ void test_eric() { // test eric's stuff
 //  Serial.println(yFilt2);
 //  print_Point(compute_transformed_coordinates(read_front()));
 //  print_CurrState();
-  turn_to_target({1.7,-2.38});
-  
-//  Serial.println(get_heading_toward({1.7,-2.38}));
-//  print_CurrState();
+
   delay(100);
 }
 

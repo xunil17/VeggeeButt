@@ -48,6 +48,10 @@ float get_heading_between_points(Point p1, Point p2) {
   return heading;
 }
 
+float get_distance_between_points(Point target1, Point target2) {
+  return sqrt(sq(target1.x-target2.x) + sq(target1.y-target2.y));
+}
+
 // get heading relative to current heading to face target
 float get_heading_toward(Point target) {
   return get_heading_between_points({CurrState.x, CurrState.y}, target);
