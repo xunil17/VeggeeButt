@@ -24,7 +24,7 @@ Point get_closest_dumpster() {
 }
 
 Point get_closest_center() {
-  return {7,0};
+  return get_closest_point(CL, CR);
 }
 
 Point get_closest_point(Point p1, Point p2) {

@@ -150,8 +150,9 @@ const Point DBOT = { (BLCAL.x + BRCAL.x) / 2, BLCAL.y > BRCAL.y ? BLCAL.y : BRCA
 const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCAL.y };
 
 // centers
-//const Point CL =
-//const Point CR =
+// 1/3 and 2/3 distance between left and right averaged sides
+const Point CL = { (((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 2) / 3, (BLCAL.y + TLCAL.y) / 2 };
+const Point CR = { ((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 3, (BRCAL.y + TRCAL.y) / 2 };
 
 volatile bool hit = false;
 
