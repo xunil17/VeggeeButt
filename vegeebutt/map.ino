@@ -30,7 +30,7 @@ Point get_closest_point(Point p1, Point p2) {
 }
 
 Point get_closest_dumpster() {
-  return TLCAL; // return something stupid for now...
+  return get_closest_point(DTOP, DBOT);
 }
 
 bool within_boundary() {

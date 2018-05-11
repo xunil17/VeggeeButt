@@ -145,23 +145,20 @@ String Direction_to_string(Direction dir) {
 const Block TeamType = Cube;
 
 // directional notation is relative to facing the board
-//   landscape when the BLUE circle is on the LEFT
+//   landscape when the center BLUE circle is on the LEFT
 // calibration globals:
 const Point BLCAL = { 1.33, -2.31};
 const Point BRCAL = { 15, -2.5};
 const Point TLCAL = { 1.36, 2.89 };
 const Point TRCAL = { 14.1, 2.9 };
 
-const Point BL = { 0, 0 };
-const Point BR = { BRCAL.x - BLCAL.x, BRCAL.y - BLCAL.y };
-const Point TL = { TLCAL.x - BLCAL.x, TLCAL.y - BLCAL.y };
-const Point TR = { TRCAL.x - BLCAL.x, TRCAL.y - BLCAL.y };
-const float valx = 12;
-const float valy = 6;
-const Point bl = { 0, 0 };
-const Point br = { valx, 0 };
-const Point tl = { 0, valy};
-const Point tr = { valx, valy };
+// dumpsters
+const Point DBOT = { (BLCAL.x + BRCAL.x) / 2, BLCAL.y > BRCAL.y ? BLCAL.y : BRCAL.y };
+const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCAL.y };
+
+// centers
+//const Point CL = 
+//const Point CR = 
 
 const float heading_threshold = 1.0; // room for error for correcting heading
 float middle;
@@ -216,13 +213,15 @@ void setup() {
   Serial.begin(9800);
 }
 
-const Mode mode = Run;
+const Mode mode = Test;
 
 void loop() {
   if (mode == Calibrate) {
     calibrate_routine();
   } else if (mode == Test) {
+    update_vive();
     test();
+    delay(100);
   } else {
     go();
   }
@@ -256,14 +255,14 @@ void calibrate_routine() {
 
 void go() {
   plan();
-//  check_time();
+  check_time();
 }
 
 // instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them. 
 void test() {
-  update_vive();
-//  test_within_boundary();
-  delay(100);
+//  test_print_dumpsters();
+  turn_to_target(BRCAL);
+  delay(500);
 }
 
 void test_get_closest_goal() {
@@ -284,5 +283,10 @@ void test_bumper() {
   delay(100);
   Serial.print(digitalRead(button_front1));
   Serial.println(digitalRead(button_front2));
+}
+
+void test_print_dumpsters() {
+  print_Point(DTOP);
+  print_Point(DBOT);
 }
 
