@@ -5,14 +5,6 @@ void plan() {
   find_and_go_to_block(); // look for and get to the block
 }
 
-void swap_dir() {
-  if (CurrState.dir == Left) {
-    CurrState.dir = Right;
-  } else {
-    CurrState.dir = Left;
-  }
-}
-
 void find_and_go_to_block() {
   if (CurrState.dir == Left) {
     turn_left();
@@ -50,15 +42,21 @@ void find_and_go_to_block() {
   }
 }
 
+void swap_dir() {
+  if (CurrState.dir == Left) {
+    CurrState.dir = Right;
+  } else {
+    CurrState.dir = Left;
+  }
+}
+
 bool check_boundary_and_maybe_reset() {
   if (CurrState.resetting) {
-    //    hit = false;
     return true;
   }
 
   if (!within_boundary()) {
     CurrState.resetting = true;
-    //    hit = false;
     go_to_center();
     return true;
   }
@@ -67,7 +65,7 @@ bool check_boundary_and_maybe_reset() {
 }
 
 void go_to_center() {
-  find_and_go_to_target({7, 0});
+  find_and_go_to_target(get_closest_center());
 }
 
 void back_up() {
@@ -185,7 +183,7 @@ void turn_to_target(Point target) {
   float sum = heading_diff + 180*4;
   while (abs(sum / 5.0) > 3) {
     update_vive();
-    
+
     error_integral = error_integral + heading_diff; //error sum
     if (error_integral > EINTMAX) {
       error_integral = EINTMAX;
@@ -194,7 +192,7 @@ void turn_to_target(Point target) {
     }
 
     u = kp * heading_diff + ki * error_integral;
-    
+
 //    if (u < 0) {
 //      u = u - min_u;
 //    } else {
@@ -212,7 +210,7 @@ void turn_to_target(Point target) {
     heading_diff = get_heading_difference(target_heading);
     sum += heading_diff - heading_diffs[4];
     for(int i = 4; i > 0; i--) {
-      heading_diffs[i] = heading_diffs[i-1]; 
+      heading_diffs[i] = heading_diffs[i-1];
     }
     heading_diffs[0] = heading_diff;
   }

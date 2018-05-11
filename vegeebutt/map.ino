@@ -19,6 +19,14 @@ Point get_closest_goal() {
   return get_closest_point(g1, g2);
 }
 
+Point get_closest_dumpster() {
+  return get_closest_point(DTOP, DBOT);
+}
+
+Point get_closest_center() {
+  return {7,0};
+}
+
 Point get_closest_point(Point p1, Point p2) {
   Point curr = {CurrState.x, CurrState.y};
 
@@ -27,10 +35,6 @@ Point get_closest_point(Point p1, Point p2) {
   } else {
     return p1;
   }
-}
-
-Point get_closest_dumpster() {
-  return get_closest_point(DTOP, DBOT);
 }
 
 bool within_boundary() {
@@ -70,7 +74,7 @@ float get_heading_difference(float target_heading) {
   float headi = CurrState.heading;
   float left = -1;
   float right = -1;
-  
+
   if (headf >= headi) {
     left = 360 - headf + headi;
     right = headf - headi;

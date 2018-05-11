@@ -1,3 +1,5 @@
+// BL, BR, TL, TR
+
 Point read_front() {
   return {xFilt2, yFilt2};
 }
@@ -5,8 +7,6 @@ Point read_front() {
 Point read_back() {
   return {xFilt1, yFilt1};
 }
-
-// BL, BR, TL, TR
 
 void update_vive() {
   if (V1.useMe == 1) {
@@ -40,8 +40,6 @@ void update_vive() {
   CurrState.y = front.y;
 
   CurrState.heading = get_heading_between_points(back, front);
-
-  
 }
 
 // the sensor interrupts

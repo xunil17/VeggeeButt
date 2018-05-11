@@ -91,9 +91,6 @@ typedef struct State_ {
   bool resetting;
 } State;
 
-
-//typedef struct state State;
-
 // global instance representing Robot state
 volatile State CurrState = {0, 0, 0, Right, None, false};
 
@@ -153,11 +150,8 @@ const Point DBOT = { (BLCAL.x + BRCAL.x) / 2, BLCAL.y > BRCAL.y ? BLCAL.y : BRCA
 const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCAL.y };
 
 // centers
-//const Point CL = 
+//const Point CL =
 //const Point CR =
-
-const float heading_threshold = 1.0; // room for error for correcting heading
-float middle;
 
 volatile bool hit = false;
 
@@ -168,6 +162,7 @@ void setup() {
   pinMode(photo2, INPUT);
   pinMode(laser3, OUTPUT);
   pinMode(photo3, INPUT);
+
   pinMode(led, OUTPUT);
   digitalWrite(led, HIGH);
 
@@ -214,6 +209,7 @@ const Mode mode = Test;
 void loop() {
   if (mode == Calibrate) {
     calibrate_routine();
+    delay(100);
   } else if (mode == Test) {
     update_vive();
     test();
@@ -254,9 +250,9 @@ void go() {
   check_time();
 }
 
-// instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them.
+// instead of commenting and uncommenting, just write new functions starting
+// with `test_` if you think you will reuse them.
 void test() {
-//  test_print_dumpsters();
   turn_to_target(BRCAL);
   delay(500);
 }
