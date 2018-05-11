@@ -52,6 +52,8 @@ void update_vive() {
   CurrState.y = front.y;
 
   CurrState.heading = get_heading_between_points(back, front);
+
+  
 }
 
 // the sensor interrupts

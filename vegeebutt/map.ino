@@ -1,5 +1,11 @@
 // Functions for calculations related to headings and coordinates.
 
+
+// larger boundary offset means we can get closer to the edges...
+#define x_boundary_offset 0.2
+#define y_boundary_offset 0.2
+
+
 Point get_closest_goal() {
   Point g1, g2;
   if (TeamType == Cylinder) {
@@ -10,17 +16,49 @@ Point get_closest_goal() {
     g2 = TRCAL;
   }
 
+  return get_closest_point(g1, g2);
+}
+
+Point get_closest_point(Point p1, Point p2) {
   Point curr = {CurrState.x, CurrState.y};
 
-  if (get_distance_between_points(curr, g1) > get_distance_between_points(curr, g2)) {
-    return g2;
+  if (get_distance_between_points(curr, p1) > get_distance_between_points(curr, p2)) {
+    return p2;
   } else {
-    return g1;
+    return p1;
   }
 }
 
 Point get_closest_dumpster() {
-  return BLCAL; // return something stupid for now...
+  return TLCAL; // return something stupid for now...
+}
+
+bool within_boundary() {
+  Point c = {CurrState.x, CurrState.y};
+  Point closest_b = get_closest_point(BLCAL, BRCAL);
+  Point closest_t = get_closest_point(TLCAL, TRCAL);
+  Point closest = get_closest_point(closest_b, closest_t);
+
+  bool xokay = false;
+  bool yokay = false;
+
+  // check y
+  // if closer to bottom, current y needs to be greater than closest.y
+  if (closest == BLCAL || closest == BRCAL) {
+    yokay = c.y + y_boundary_offset > closest.y;
+  } else {
+    yokay = c.y - y_boundary_offset < closest.y;
+  }
+
+  // check x
+  // if closer to left, current x needs to be greater than closest.x
+  if (closest == BLCAL || closest == TLCAL) {
+    xokay = c.x + x_boundary_offset > closest.x;
+  } else {
+    xokay = c.x - x_boundary_offset < closest.x;
+  }
+
+  return xokay && yokay;
 }
 
 // This function returns the difference between the target_heading
@@ -40,15 +78,6 @@ float get_heading_difference(float target_heading) {
     left = headi - headf;
     right = 360 - headi + headf;
   }
-
-//  Serial.print("initial, target, left, right: ");
-//  Serial.print(headi);
-//  Serial.print(" ");
-//  Serial.print(headf);
-//  Serial.print(" ");
-//  Serial.print(left);
-//  Serial.print(" ");
-//  Serial.println(right);
 
   if (left < right) {
     return -left;

@@ -2,6 +2,7 @@
 
 void plan() {
   Serial.println("Entering plan()");
+  CurrState.resetting = false;
   find_and_go_to_block(); // look for and get to the block
 }
 
@@ -29,12 +30,15 @@ void find_and_go_to_block() {
     // move toward block unless it moves out of sight
     do {
       update_vive(); // update vive periodically for accurate coordinates
+//      if (check_boundary_and_maybe_reset()) { return; }
+      
       move_forward(110);
       
       // stop when block is within our grasp
       if (hit) {
         stop_robot();
         hit = false;
+//        if (check_boundary_and_maybe_reset()) { return; }
         move_forward(30);
         delay(200);
         stop_robot();
@@ -46,6 +50,26 @@ void find_and_go_to_block() {
   }
 }
 
+//bool check_boundary_and_maybe_reset() {
+//  if (CurrState.resetting) {
+//    hit = false;
+//    return true;
+//  }
+//  
+//  if (!within_boundary()) {
+//    CurrState.resetting = true;
+//    hit = false;
+//    reset_after_hitting_boundary();
+//    return true;
+//  }
+//
+//  return false;
+//}
+
+//void reset_after_hitting_boundary() {
+//  find_and_go_to_target({7,0});
+//}
+
 void back_up() {
   move_backward(100);
   delay(800);
@@ -55,20 +79,26 @@ void back_up() {
 void find_and_go_to_target(Point target) {
   go_to_target(target);
   stop_robot();
-  open_gripper_max();
-  back_up();
 }
 
 void find_and_go_to_goal() {
   find_and_go_to_target(get_closest_goal());
+  open_gripper_max();
+  back_up();
 }
 
 void find_and_go_to_dumpster() {
   find_and_go_to_target(get_closest_dumpster());
+  open_gripper_max();
+  back_up();
 }
 
 void handle_block(Block type) {
   Serial.println("Entering handle_block()");
+//  if (check_boundary_and_maybe_reset()) {
+//    return;
+//  }
+  
   if (type == Cylinder) {
     Serial.println("Found Cylinder!");
     handle_cylinder();
@@ -102,7 +132,7 @@ void handle_cube() {
 void go_to_target(Point target) {
   float min_u = 70;
   if (CurrState.holding == Cylinder) {
-    min_u = 120;
+    min_u = 150;
   }
   int vel = 70;
   float u;
@@ -112,6 +142,10 @@ void go_to_target(Point target) {
   float dist = get_distance_between_points(target,{CurrState.x,CurrState.y});
   while (abs(dist) > 0.6) {
     update_vive();
+//    if (check_boundary_and_maybe_reset()) {
+//      return;
+//    }
+    
     u = kp * heading_diff;
     if(abs(heading_diff) > 15) {
       turn_to_target(target);
@@ -122,20 +156,7 @@ void go_to_target(Point target) {
       move_left_motor(vel-u);
       move_right_motor(vel+u);
     }
-//    turn_robot((int)u);
-//    print_CurrState();
 
-    
-//    Serial.print(eint);
-//    Serial.print(dist);
-//    Serial.print(" ");
-//    Serial.print(CurrState.heading);
-//    Serial.print(" ");
-//    Serial.print(heading_diff);
-//    Serial.print(" ");
-//    Serial.print(target_heading);
-//    Serial.print(" ");
-//    Serial.println(u);
     target_heading = get_heading_toward(target);
     heading_diff = get_heading_difference(target_heading);
     dist = get_distance_between_points(target,{CurrState.x,CurrState.y});
@@ -150,20 +171,11 @@ void turn_to_target(Point target) {
     min_u = 50;
   }
   float u;
-//  float eint = 0;
   float kp = 0.4;
-//  float ki = 0.2;
   float target_heading = get_heading_toward(target);
   float heading_diff = get_heading_difference(target_heading);
   while (abs(heading_diff) > 5) {
     update_vive();
-//    eint = eint + heading_diff; //error sum
-//    if (eint > EINTMAX) {
-//      eint = EINTMAX;
-//    } else if (eint < -EINTMAX) {
-//      eint = -EINTMAX;
-//    }
-////    u = kp * heading_diff + ki * eint;
     u = kp * heading_diff;
     if (u < 0) {
       u -= min_u;
@@ -171,18 +183,6 @@ void turn_to_target(Point target) {
       u += min_u;
     }
     turn_robot((int)u);
-//    print_CurrState();
-
-    
-//    Serial.print(eint);
-////    Serial.print(" ");
-    Serial.print(CurrState.heading);
-    Serial.print(" ");
-    Serial.print(heading_diff);
-    Serial.print(" ");
-    Serial.print(target_heading);
-    Serial.print(" ");
-    Serial.println(u);
     target_heading = get_heading_toward(target);
     heading_diff = get_heading_difference(target_heading);
   }

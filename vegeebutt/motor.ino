@@ -1,3 +1,5 @@
+#define turn_speed 35
+
 
 //drives the left motor forward or backward (-255 to 255)
 void move_left_motor(int vel) {
@@ -44,11 +46,11 @@ void move_backward(int vel) {
 }
 
 void turn_left() {
-  turn_robot(-25);
+  turn_robot(-turn_speed);
 }
 
 void turn_right() {
-  turn_robot(25);
+  turn_robot(turn_speed);
 }
 
 //turns the robot (-255 to 0) is turn left and (0 to 255) is turn right

@@ -81,19 +81,24 @@ typedef struct Point_ {
   float y;
 } Point;
 
+bool operator==(const Point& p1, const Point& p2) {
+  return p1.x == p2.x && p1.y == p2.y;
+}
+
 typedef struct State_ {
   float x;
   float y;
   float heading;
   Direction dir;
   Block holding;
+  bool resetting;
 } State;
 
 
 //typedef struct state State;
 
 // global instance representing Robot state
-volatile State CurrState = {0, 0, 0, Right, None};
+volatile State CurrState = {0, 0, 0, Right, None, false};
 
 void print_Point(Point p) {
   Serial.print("x: ");
@@ -103,8 +108,8 @@ void print_Point(Point p) {
 };
 
 void print_CurrState() {
-  Serial.print("CurrState:");
-  Serial.print("x,y,heading,direction,holding: ");
+  Serial.print("CurrState ");
+  Serial.print("(x,y,heading,direction,holding): ");
   Serial.print(CurrState.x);
   Serial.print(", ");
   Serial.print(CurrState.y);
@@ -113,7 +118,9 @@ void print_CurrState() {
   Serial.print(", ");
   Serial.print(Direction_to_string(CurrState.dir));
   Serial.print(", ");
-  Serial.println(Block_to_string(CurrState.holding));
+  Serial.print(Block_to_string(CurrState.holding));
+  Serial.print(", ");
+  Serial.println(CurrState.resetting);
 };
 
 String Block_to_string(Block b) {
@@ -132,7 +139,7 @@ String Direction_to_string(Direction dir) {
   } else {
     return "Right";
   }
-}
+};
 
 const Block TeamType = Cube;
 
@@ -222,7 +229,9 @@ void loop() {
 
 void ISR_button() {
   stop_robot();
-  hit = true;
+//  if (!check_boundary_and_maybe_reset()) {
+  hit = true;  
+//  }
 }
 
 void calibrate_routine() {
@@ -237,7 +246,7 @@ void go() {
 // instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them. 
 void test() {
   update_vive();
-  test_get_closest_goal();
+  test_within_boundary();
 }
 
 void test_get_closest_goal() {
@@ -246,5 +255,10 @@ void test_get_closest_goal() {
   print_Point(read_front());
   Serial.println();
   delay(250);
+}
+
+void test_within_boundary() {
+  Serial.println(within_boundary());
+  delay(100);
 }
 
