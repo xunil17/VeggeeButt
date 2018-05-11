@@ -1,5 +1,5 @@
 #define stop_early 1000
-#define competition_length 180000 // 3 * 60 * 1000
+#define competition_length 20000 // 3 * 60 * 1000 = 180000
 
 void check_time() {
   unsigned long current_time = millis();
@@ -12,6 +12,7 @@ void check_time() {
 void stop_everything() {
   stop_robot();
   gripper_stop();
+  delay(100);
 }
 
 void sleep_forever() {

@@ -141,12 +141,20 @@ String Direction_to_string(Direction dir) {
 const Block TeamType = Cube;
 
 // directional notation is relative to facing the board
-//   landscape when the BLUE circle is on the LEFT
+//   landscape when the center BLUE circle is on the LEFT
 // calibration globals:
 const Point BLCAL = { 1.33, -2.31};
 const Point BRCAL = { 15, -2.5};
 const Point TLCAL = { 1.36, 2.89 };
 const Point TRCAL = { 14.1, 2.9 };
+
+// dumpsters
+const Point DBOT = { (BLCAL.x + BRCAL.x) / 2, BLCAL.y > BRCAL.y ? BLCAL.y : BRCAL.y };
+const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCAL.y };
+
+// centers
+//const Point CL = 
+//const Point CR =
 
 const float heading_threshold = 1.0; // room for error for correcting heading
 float middle;
@@ -178,8 +186,8 @@ void setup() {
   pinMode(button_gripper2, INPUT);
 
 
-  attachInterrupt(digitalPinToInterrupt(button_front1), ISR_button, RISING);
-  attachInterrupt(digitalPinToInterrupt(button_front2), ISR_button, RISING);
+  attachInterrupt(digitalPinToInterrupt(button_front1), ISR_button_1, RISING);
+  attachInterrupt(digitalPinToInterrupt(button_front2), ISR_button_2, RISING);
 
   gripper.attach(gripper_pwm);
   open_gripper_max();
@@ -201,21 +209,39 @@ void setup() {
   Serial.begin(9800);
 }
 
-const Mode mode = Run;
+const Mode mode = Test;
 
 void loop() {
   if (mode == Calibrate) {
     calibrate_routine();
   } else if (mode == Test) {
+    update_vive();
     test();
+    delay(100);
   } else {
     go();
   }
 }
 
-void ISR_button() {
-  stop_robot();
-  hit = true;
+void ISR_button_1() {
+  delayMicroseconds(10000);
+  if(digitalRead(button_front1) == HIGH) {
+    stop_robot();
+    hit = true;
+  } else {
+    hit = false;
+  }
+
+}
+
+void ISR_button_2() {
+  delayMicroseconds(10000);
+  if(digitalRead(button_front2) == HIGH) {
+    stop_robot();
+    hit = true;
+  } else {
+    hit = false;
+  }
 }
 
 void calibrate_routine() {
@@ -228,11 +254,11 @@ void go() {
   check_time();
 }
 
-// instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them. 
+// instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them.
 void test() {
-  update_vive();
-//  test_within_boundary();
-  delay(100);
+//  test_print_dumpsters();
+  turn_to_target(BRCAL);
+  delay(500);
 }
 
 void test_get_closest_goal() {
@@ -255,3 +281,7 @@ void test_bumper() {
   Serial.println(digitalRead(button_front2));
 }
 
+void test_print_dumpsters() {
+  print_Point(DTOP);
+  print_Point(DBOT);
+}
