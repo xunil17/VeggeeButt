@@ -23,19 +23,6 @@ void move_right_motor(int vel) {
   }
 }
 
-/*  THESE FUNCTIONS MAY BE USELESS
-  //turns robot left (0 to 255)
-  void turn_left(unsigned int spd) {
-  move_left_motor(spd);
-  move_right_motor(-spd);
-  }
-
-  //turns robot right (0 to 255)
-  void turn_right(unsigned int spd) {
-  move_left_motor(-spd);
-  move_right_motor(spd);
-  }*/
-
 void move_forward(int vel) {
   move_left_motor(vel);
   move_right_motor(vel);

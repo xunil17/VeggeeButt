@@ -1,5 +1,4 @@
 #include <Servo.h>
-#include <BasicLinearAlgebra.h>
 
 // for vive
 #include <math.h>
@@ -24,8 +23,6 @@ volatile viveSensor V1, V2;
 volatile float xPos1, yPos1, xPos2, yPos2;
 volatile float xOld1 = 0, yOld1 = 0, xFilt1 = 0, yFilt1 = 0;
 volatile float xOld2 = 0, yOld2 = 0, xFilt2 = 0, yFilt2 = 0;
-
-using namespace BLA;
 
 #define photo1 A8
 #define laser1 23
@@ -107,8 +104,7 @@ void print_Point(Point p) {
   Serial.println(p.y);
 };
 
-void 
-rrState() {
+void print_CurrState() {
   Serial.print("CurrState ");
   Serial.print("(x,y,heading,direction,holding,lifetime): ");
   Serial.print(CurrState.x);
@@ -158,7 +154,7 @@ const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCA
 
 // centers
 //const Point CL = 
-//const Point CR = 
+//const Point CR =
 
 const float heading_threshold = 1.0; // room for error for correcting heading
 float middle;
@@ -258,7 +254,7 @@ void go() {
 //  check_time();
 }
 
-// instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them. 
+// instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them.
 void test() {
 //  find_and_go_to_target({7, 0});
 //  test_print_dumpsters();
@@ -291,4 +287,3 @@ void test_print_dumpsters() {
   print_Point(DTOP);
   print_Point(DBOT);
 }
-
