@@ -107,9 +107,10 @@ void print_Point(Point p) {
   Serial.println(p.y);
 };
 
-void print_CurrState() {
+void 
+rrState() {
   Serial.print("CurrState ");
-  Serial.print("(x,y,heading,direction,holding): ");
+  Serial.print("(x,y,heading,direction,holding,lifetime): ");
   Serial.print(CurrState.x);
   Serial.print(", ");
   Serial.print(CurrState.y);
@@ -229,9 +230,7 @@ void loop() {
 
 void ISR_button() {
   stop_robot();
-//  if (!check_boundary_and_maybe_reset()) {
-  hit = true;  
-//  }
+  hit = true;
 }
 
 void calibrate_routine() {
@@ -241,12 +240,14 @@ void calibrate_routine() {
 
 void go() {
   plan();
+  check_time();
 }
 
 // instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them. 
 void test() {
   update_vive();
-  test_within_boundary();
+//  test_within_boundary();
+  delay(100);
 }
 
 void test_get_closest_goal() {
@@ -260,5 +261,12 @@ void test_get_closest_goal() {
 void test_within_boundary() {
   Serial.println(within_boundary());
   delay(100);
+}
+
+void test_bumper() {
+  stop_robot();
+  delay(100);
+  Serial.print(digitalRead(button_front1));
+  Serial.println(digitalRead(button_front2));
 }
 

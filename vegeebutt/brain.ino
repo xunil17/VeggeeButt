@@ -1,7 +1,6 @@
 #define EINTMAX 360
 
 void plan() {
-  Serial.println("Entering plan()");
   CurrState.resetting = false;
   find_and_go_to_block(); // look for and get to the block
 }
@@ -15,7 +14,6 @@ void swap_dir() {
 }
 
 void find_and_go_to_block() {
-//  open_gripper_max(); // reset gripper before trying to find other stuff
   if (CurrState.dir == Left) {
     turn_left();
   } else {
@@ -25,50 +23,50 @@ void find_and_go_to_block() {
   if (block_seen()) {
     swap_dir();
     stop_robot();
-    delay(250);
 
     // move toward block unless it moves out of sight
     do {
       update_vive(); // update vive periodically for accurate coordinates
-//      if (check_boundary_and_maybe_reset()) { return; }
+      if (check_boundary_and_maybe_reset()) { return; }
       
       move_forward(110);
       
       // stop when block is within our grasp
-      if (hit) {
+      if (hit && block_seen()) {
         stop_robot();
         hit = false;
-//        if (check_boundary_and_maybe_reset()) { return; }
         move_forward(30);
         delay(200);
         stop_robot();
         Block block_type = grab_and_identify();
         handle_block(block_type);
         return;
+      } else if (hit) {
+        hit = false;
       }
     } while(block_seen());
   }
 }
 
-//bool check_boundary_and_maybe_reset() {
-//  if (CurrState.resetting) {
+bool check_boundary_and_maybe_reset() {
+  if (CurrState.resetting) {
 //    hit = false;
-//    return true;
-//  }
-//  
-//  if (!within_boundary()) {
-//    CurrState.resetting = true;
+    return true;
+  }
+  
+  if (!within_boundary()) {
+    CurrState.resetting = true;
 //    hit = false;
-//    reset_after_hitting_boundary();
-//    return true;
-//  }
-//
-//  return false;
-//}
+    go_to_center();
+    return true;
+  }
 
-//void reset_after_hitting_boundary() {
-//  find_and_go_to_target({7,0});
-//}
+  return false;
+}
+
+void go_to_center() {
+  find_and_go_to_target({7,0});
+}
 
 void back_up() {
   move_backward(100);
@@ -85,19 +83,17 @@ void find_and_go_to_goal() {
   find_and_go_to_target(get_closest_goal());
   open_gripper_max();
   back_up();
+  go_to_center();
 }
 
 void find_and_go_to_dumpster() {
   find_and_go_to_target(get_closest_dumpster());
   open_gripper_max();
   back_up();
+  go_to_center();
 }
 
 void handle_block(Block type) {
-  Serial.println("Entering handle_block()");
-//  if (check_boundary_and_maybe_reset()) {
-//    return;
-//  }
   
   if (type == Cylinder) {
     Serial.println("Found Cylinder!");
@@ -114,6 +110,9 @@ void handle_block(Block type) {
 
 void handle_cylinder() {
   gripper_tighten_briefly();
+
+  go_to_center();
+  
   if (TeamType == Cylinder) {
     find_and_go_to_goal();
   } else {
@@ -122,6 +121,10 @@ void handle_cylinder() {
 }
 
 void handle_cube() {
+  gripper_tighten_briefly();
+  
+  go_to_center();
+  
   if (TeamType == Cube) {
     find_and_go_to_goal();
   } else {
@@ -130,11 +133,12 @@ void handle_cube() {
 }
 
 void go_to_target(Point target) {
-  float min_u = 70;
+  int vel = 110;
   if (CurrState.holding == Cylinder) {
-    min_u = 150;
+    vel = 200;
+  } else if (CurrState.holding == Cube) {
+    vel = 140;
   }
-  int vel = 70;
   float u;
   float kp = 0.5;
   float target_heading = get_heading_toward(target);
@@ -142,9 +146,6 @@ void go_to_target(Point target) {
   float dist = get_distance_between_points(target,{CurrState.x,CurrState.y});
   while (abs(dist) > 0.6) {
     update_vive();
-//    if (check_boundary_and_maybe_reset()) {
-//      return;
-//    }
     
     u = kp * heading_diff;
     if(abs(heading_diff) > 15) {
@@ -168,7 +169,7 @@ void go_to_target(Point target) {
 void turn_to_target(Point target) {
   float min_u = 30;
   if (CurrState.holding == Cylinder) {
-    min_u = 50;
+    min_u = 70;
   }
   float u;
   float kp = 0.4;
@@ -192,5 +193,3 @@ bool block_seen() {
   float scan_result = scan();
   return scan_result >= scan_threshold;
 }
-
-

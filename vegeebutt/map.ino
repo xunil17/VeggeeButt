@@ -2,8 +2,8 @@
 
 
 // larger boundary offset means we can get closer to the edges...
-#define x_boundary_offset 0.2
-#define y_boundary_offset 0.2
+#define x_boundary_offset 0
+#define y_boundary_offset 0
 
 
 Point get_closest_goal() {

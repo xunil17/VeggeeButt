@@ -1,15 +1,3 @@
-//Point compute_center() {
-//  Point front = read_front();
-//  Point back = read_back();
-//  return {(front.x-back.x) / 2 + (back.x), (front.y-back.y) / 2 + (back.y)};
-//}
-
-//float compute_heading() {
-//  Point front = read_front();
-//  Point back = read_back();
-//  
-//}
-
 Point read_front() {
   return {xFilt2, yFilt2};
 }
