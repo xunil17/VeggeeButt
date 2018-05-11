@@ -1,4 +1,6 @@
-#define EINTMAX 720
+#define EINTMAX 1000
+
+#define heading_diff_threshold 5
 
 void plan() {
   CurrState.resetting = false;
@@ -169,53 +171,94 @@ void go_to_target(Point target) {
 }
 
 void turn_to_target(Point target) {
-//  float min_u = 30;
-    float kp = 0.1;
-    float ki = 0.07;
-  float error_integral;
-  if (CurrState.holding == Cylinder) {
-//    min_u = 70;
-    float kp = 0.8;
-    float ki = 0.07;
-  }
+  float kp = 0.5;
+  float ki = 0.07;
+  float kd = 0.2;
+  float error_integral, edot;
+//  if (CurrState.holding == Cylinder) {
+//    float kp = 0.7;
+//    float ki = 0.07;
+//    float kd = 0.2;
+//  }
   float u;
   float target_heading = get_heading_toward(target);
   float heading_diff = get_heading_difference(target_heading);
-  float heading_diffs[] = {heading_diff, 180, 180, 180, 180};
-  float sum = heading_diff + 180*4;
-  while (abs(sum / 5.0) > 3) {
+  float previous = heading_diff;
+  int asize = 5;
+  bool heading_diffs_within[asize];
+  initialize_within(heading_diffs_within, asize, abs(heading_diff) < heading_diff_threshold);
+  while (!all_within(heading_diffs_within, asize)) {
     update_vive();
     
     error_integral = error_integral + heading_diff; //error sum
+    edot = heading_diff - previous;
     if (error_integral > EINTMAX) {
       error_integral = EINTMAX;
     } else if (error_integral < -EINTMAX) {
       error_integral = -EINTMAX;
     }
 
+//    u = kp * heading_diff + ki * error_integral + kd * edot;
     u = kp * heading_diff + ki * error_integral;
-    
-//    if (u < 0) {
-//      u = u - min_u;
-//    } else {
-//      u = u + min_u;
-//    }
-    Serial.print(u);
-    Serial.print(" ");
-    Serial.print(kp*heading_diff);
-    Serial.print(ki*error_integral);
+
+    //    if (u < 0) {
+    //      u = u - min_u;
+    //    } else {
+    //      u = u + min_u;
+    //    }
     Serial.print(heading_diff);
     Serial.print(" ");
-    Serial.println(error_integral);
+    Serial.print(u);
+    Serial.print(" ");
+    Serial.print(kp * heading_diff);
+    Serial.print(" ");
+    Serial.print(ki * error_integral);
+    Serial.print(" ");
+    Serial.println(kd * edot);
+//    print_array(heading_diffs_within, asize);
+//    Serial.print(" ");
+//    Serial.println(error_integral);
     turn_robot((int)u);
     target_heading = get_heading_toward(target);
+    previous = heading_diff;
     heading_diff = get_heading_difference(target_heading);
-    sum += heading_diff - heading_diffs[4];
-    for(int i = 4; i > 0; i--) {
-      heading_diffs[i] = heading_diffs[i-1]; 
-    }
-    heading_diffs[0] = heading_diff;
+    update_and_rotate(heading_diffs_within, asize, heading_diff);
   }
+}
+
+void update_and_rotate(bool within[], int asize, float heading_diff) {
+  for (int i = asize - 1; i > 0; i--) {
+    within[i] = within[i-1];
+  }
+
+  within[0] = abs(heading_diff) < heading_diff_threshold;
+}
+
+void initialize_within(bool within[], int asize, bool first) {
+  within[0] = first;
+  for (int i = 1; i < asize; i++) {
+    within[i] = false;
+  }
+}
+
+bool all_within(bool within[], int asize) {
+  for (int i = 0; i < asize; i++) {
+    if (!within[i]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+void print_array(bool within[], int asize) {
+  Serial.print("[");
+  for (int i = 0; i < asize; i++) {
+    Serial.print(within[i]);
+    Serial.print(", ");
+  }
+
+  Serial.println("]");
 }
 
 bool block_seen() {
