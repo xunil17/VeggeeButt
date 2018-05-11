@@ -193,8 +193,8 @@ void setup() {
   pinMode(button_gripper2, INPUT);
 
 
-  attachInterrupt(digitalPinToInterrupt(button_front1), ISR_button, RISING);
-  attachInterrupt(digitalPinToInterrupt(button_front2), ISR_button, RISING);
+  attachInterrupt(digitalPinToInterrupt(button_front1), ISR_button_1, RISING);
+  attachInterrupt(digitalPinToInterrupt(button_front2), ISR_button_2, RISING);
 
   gripper.attach(gripper_pwm);
   open_gripper_max();
@@ -228,9 +228,25 @@ void loop() {
   }
 }
 
-void ISR_button() {
-  stop_robot();
-  hit = true;
+void ISR_button_1() {
+  delayMicroseconds(10000);
+  if(digitalRead(button_front1) == HIGH) {
+    stop_robot();
+    hit = true;
+  } else {
+    hit = false;
+  }
+
+}
+
+void ISR_button_2() {
+  delayMicroseconds(10000);
+  if(digitalRead(button_front2) == HIGH) {
+    stop_robot();
+    hit = true;
+  } else {
+    hit = false;
+  }
 }
 
 void calibrate_routine() {
@@ -240,7 +256,7 @@ void calibrate_routine() {
 
 void go() {
   plan();
-  check_time();
+//  check_time();
 }
 
 // instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them. 
