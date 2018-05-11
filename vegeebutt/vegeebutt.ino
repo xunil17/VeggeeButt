@@ -221,7 +221,7 @@ void loop() {
 }
 
 void ISR_button_1() {
-  delayMicroseconds(10000);
+  delayMicroseconds(2000);
   if(digitalRead(button_front1) == HIGH) {
     stop_robot();
     hit = true;
@@ -232,7 +232,7 @@ void ISR_button_1() {
 }
 
 void ISR_button_2() {
-  delayMicroseconds(10000);
+  delayMicroseconds(4000);
   if(digitalRead(button_front2) == HIGH) {
     stop_robot();
     hit = true;
@@ -248,14 +248,15 @@ void calibrate_routine() {
 
 void go() {
   plan();
-  check_time();
+//  check_time();
 }
 
 // instead of commenting and uncommenting, just write new functions starting
 // with `test_` if you think you will reuse them.
 void test() {
   turn_to_target(BRCAL);
-  delay(500);
+  stop_robot();
+  delay(5000);
 }
 
 void test_get_closest_goal() {
