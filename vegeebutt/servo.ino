@@ -16,21 +16,39 @@
 //moves gripper until at dist
 void move_gripper(int dist) {
   if (dist > 600 || dist < min_dist) {
-    gripper.write(90);
+    gripper_stop();
   } else {
     float dif = get_dist() - dist;
     unsigned long start_time = millis();
     while (abs(dif) > 4 && millis() - start_time < 4000) {
       if (dif > 0) { //positive means we need to open gripper
-        gripper.write(82);
+        gripper_loosen();
       } else {
-        gripper.write(98); //close gripper
+        gripper_tighten(); //close gripper
       }
       dif = get_dist() - dist;
       
     }
-    gripper.write(90);
+    gripper_stop();
   }
+}
+
+void gripper_tighten() {
+  gripper.write(98);
+}
+
+void gripper_loosen() {
+  gripper.write(82);
+}
+
+void gripper_stop() {
+  gripper.write(90);
+}
+
+void gripper_tighten_briefly() {
+  gripper_tighten();
+  delay(200);
+  gripper_stop();
 }
 
 // grip and identify what is being gripped
@@ -50,7 +68,7 @@ Block grab_and_identify() {
 
   unsigned long start_time = millis();
   while (1) {
-    gripper.write(98);
+    gripper_tighten();
     if (gripper_gripped()){ // exit if gripped
       gripped = true;
       break;
@@ -60,10 +78,10 @@ Block grab_and_identify() {
     } 
   }
 
-  gripper.write(90);
+  gripper_stop();
 
   if (!gripped) {
-    return ret;
+    return ret; // None
   }
 
   if (get_dist() <= cylinder_grip_val + 10) {
@@ -72,7 +90,7 @@ Block grab_and_identify() {
     ret = Cube;
   }
 
-  CurrState.holding = ret;
+  CurrState.holding = ret; // update state
   return ret;
 }
 

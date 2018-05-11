@@ -1,5 +1,27 @@
 // Functions for calculations related to headings and coordinates.
 
+Point get_closest_goal() {
+  Point g1, g2;
+  if (TeamType == Cylinder) {
+    g1 = BRCAL;
+    g2 = TLCAL;
+  } else {
+    g1 = BLCAL;
+    g2 = TRCAL;
+  }
+
+  Point curr = {CurrState.x, CurrState.y};
+
+  if (get_distance_between_points(curr, g1) > get_distance_between_points(curr, g2)) {
+    return g2;
+  } else {
+    return g1;
+  }
+}
+
+Point get_closest_dumpster() {
+  return BLCAL; // return something stupid for now...
+}
 
 // This function returns the difference between the target_heading
 // and VBot's current heading. Negative means the target_heading is to

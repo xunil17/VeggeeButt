@@ -27,17 +27,6 @@ volatile float xOld2 = 0, yOld2 = 0, xFilt2 = 0, yFilt2 = 0;
 
 using namespace BLA;
 
-//enum Plan {
-//  LookForBlock,
-//  GoToBlock,
-//  GrabAndIdentifyBlock,
-//  LookForGoal,
-//  GoToGoal,
-//  DropBlock,
-//  LookForReset,
-//  GoToReset
-//};
-
 #define photo1 A8
 #define laser1 23
 
@@ -76,6 +65,17 @@ enum Block {
   None
 };
 
+enum Mode {
+  Run,
+  Calibrate,
+  Test
+};
+
+enum Direction {
+  Left,
+  Right
+};
+
 typedef struct Point_ {
   float x;
   float y;
@@ -85,6 +85,7 @@ typedef struct State_ {
   float x;
   float y;
   float heading;
+  Direction dir;
   Block holding;
 } State;
 
@@ -92,7 +93,7 @@ typedef struct State_ {
 //typedef struct state State;
 
 // global instance representing Robot state
-volatile State CurrState = {0, 0, 0, None};
+volatile State CurrState = {0, 0, 0, Right, None};
 
 void print_Point(Point p) {
   Serial.print("x: ");
@@ -103,12 +104,14 @@ void print_Point(Point p) {
 
 void print_CurrState() {
   Serial.print("CurrState:");
-  Serial.print("x,y,heading,holding: ");
+  Serial.print("x,y,heading,direction,holding: ");
   Serial.print(CurrState.x);
   Serial.print(", ");
   Serial.print(CurrState.y);
   Serial.print(", ");
   Serial.print(CurrState.heading);
+  Serial.print(", ");
+  Serial.print(Direction_to_string(CurrState.dir));
   Serial.print(", ");
   Serial.println(Block_to_string(CurrState.holding));
 };
@@ -121,17 +124,25 @@ String Block_to_string(Block b) {
   } else {
     return "None";
   }
+};
+
+String Direction_to_string(Direction dir) {
+  if (dir == Left) {
+    return "Left";
+  } else {
+    return "Right";
+  }
 }
 
-const Block TeamType = Cylinder;
+const Block TeamType = Cube;
 
 // directional notation is relative to facing the board
 //   landscape when the BLUE circle is on the LEFT
 // calibration globals:
-const Point BLCAL = { 0.84, -4.75};
-const Point BRCAL = { 15.98, -3.3};
-const Point TLCAL = { 0.72, 4.74 };
-const Point TRCAL = { 15.30, 4.23 };
+const Point BLCAL = { 1.33, -2.31};
+const Point BRCAL = { 15, -2.5};
+const Point TLCAL = { 1.36, 2.89 };
+const Point TRCAL = { 14.1, 2.9 };
 
 const Point BL = { 0, 0 };
 const Point BR = { BRCAL.x - BLCAL.x, BRCAL.y - BLCAL.y };
@@ -144,34 +155,10 @@ const Point br = { valx, 0 };
 const Point tl = { 0, valy};
 const Point tr = { valx, valy };
 
-const BLA::Matrix<8,8> A= {
-  bl.x, bl.y, 1, 0, 0, 0, -BL.x * bl.x, -BL.x * bl.y,
-  0, 0, 0, bl.x, bl.y, 1, -BL.y * bl.x, -BL.y * bl.y,
-  br.x, br.y, 1, 0, 0, 0, -BR.x * br.x, -BR.x * br.y,
-  0, 0, 0, br.x, br.y, 1, -BR.y * br.x, -BR.y * br.y,
-  tl.x, tl.y, 1, 0, 0, 0, -TL.x * tl.x, -TL.x * tl.y,
-  0, 0, 0, tl.x, tl.y, 1, -TL.y * tl.x, -TL.y * tl.y,
-  tr.x, tr.y, 1, 0, 0, 0, -TR.x * tr.x, -TR.x * tr.y,
-  0, 0, 0, tr.x, tr.y, 1, -TR.y * tr.x, -TR.y * tr.y
-};
-
-const BLA::Matrix<8,1> B = {
-  BL.x,
-  BL.y,
-  BR.x,
-  BR.y,
-  TL.x,
-  TL.y,
-  TR.x,
-  TR.y
-};
-
 const float heading_threshold = 1.0; // room for error for correcting heading
 float middle;
 
 volatile bool hit = false;
-
-const Point Goal1 = {9.67, -0.05};
 
 void setup() {
   pinMode(laser1, OUTPUT);
@@ -221,9 +208,16 @@ void setup() {
   Serial.begin(9800);
 }
 
+const Mode mode = Run;
+
 void loop() {
-  test_eric();
-//  test_sean();
+  if (mode == Calibrate) {
+    calibrate_routine();
+  } else if (mode == Test) {
+    test();
+  } else {
+    go();
+  }
 }
 
 void ISR_button() {
@@ -233,30 +227,24 @@ void ISR_button() {
 
 void calibrate_routine() {
   update_vive();
+  print_Point(read_front());
 }
 
-void test_eric() { 
-//  plan();
-
-//  update_vive();
-//  print_Point(read_front());
-  Serial.println(Block_to_string(grab_and_identify()));
-//  back_up();
-//  delay(5000);
-  delay(100);
+void go() {
+  plan();
 }
 
-
-void test_sean() {
-  if(!gripper_gripped() && get_dist() < 290) {
-    gripper.write(98);
-  } else {
-    open_gripper_max();
-    delay(5000);
-  }
-  Serial.print(digitalRead(button_gripper1));
-  Serial.println(digitalRead(button_gripper2));
-
+// instead of commenting and uncommenting, just write new functions starting with `test_` if you think you will reuse them. 
+void test() {
+  update_vive();
+  test_get_closest_goal();
 }
 
+void test_get_closest_goal() {
+  Point goal = get_closest_goal();
+  print_Point(goal);
+  print_Point(read_front());
+  Serial.println();
+  delay(250);
+}
 

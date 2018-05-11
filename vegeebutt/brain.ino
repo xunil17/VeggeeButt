@@ -5,14 +5,26 @@ void plan() {
   find_and_go_to_block(); // look for and get to the block
 }
 
+void swap_dir() {
+  if (CurrState.dir == Left) {
+    CurrState.dir = Right;
+  } else {
+    CurrState.dir = Left;
+  }
+}
+
 void find_and_go_to_block() {
-//  Serial.println("Entering find_and_go_to_block()");
 //  open_gripper_max(); // reset gripper before trying to find other stuff
-  turn_right(); // turn right by default
+  if (CurrState.dir == Left) {
+    turn_left();
+  } else {
+    turn_right();
+  }
+  
   if (block_seen()) {
-    delay(50);
+    swap_dir();
     stop_robot();
-    delay(500);
+    delay(250);
 
     // move toward block unless it moves out of sight
     do {
@@ -40,45 +52,57 @@ void back_up() {
   stop_robot();
 }
 
-void find_and_go_to_goal() {
-  go_to_target(Goal1);
+void find_and_go_to_target(Point target) {
+  go_to_target(target);
   stop_robot();
   open_gripper_max();
   back_up();
+}
+
+void find_and_go_to_goal() {
+  find_and_go_to_target(get_closest_goal());
+}
+
+void find_and_go_to_dumpster() {
+  find_and_go_to_target(get_closest_dumpster());
 }
 
 void handle_block(Block type) {
   Serial.println("Entering handle_block()");
   if (type == Cylinder) {
     Serial.println("Found Cylinder!");
-    if (TeamType == Cylinder) {
-      handle_cylinder();
-    }
+    handle_cylinder();
   } else if (type == Cube) {
     Serial.println("Found Cube!");
-    if (TeamType == Cube) {
-      handle_cube();
-    }
+    handle_cube();
   } else {
-    Serial.println("Found wrong block or None.");
+    Serial.println("Found None.");
     open_gripper_max();
     return;
   }
 }
 
 void handle_cylinder() {
-  move_gripper(220); // tighten grip on slippery cylinder
-  find_and_go_to_goal();
+  gripper_tighten_briefly();
+  if (TeamType == Cylinder) {
+    find_and_go_to_goal();
+  } else {
+    find_and_go_to_dumpster();
+  }
 }
 
 void handle_cube() {
-  find_and_go_to_goal();
+  if (TeamType == Cube) {
+    find_and_go_to_goal();
+  } else {
+    find_and_go_to_dumpster();
+  }
 }
 
 void go_to_target(Point target) {
   float min_u = 70;
   if (CurrState.holding == Cylinder) {
-    min_u = 100;
+    min_u = 120;
   }
   int vel = 70;
   float u;
