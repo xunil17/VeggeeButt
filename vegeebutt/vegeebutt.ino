@@ -1,5 +1,4 @@
 #include <Servo.h>
-#include <BasicLinearAlgebra.h>
 
 // for vive
 #include <math.h>
@@ -24,8 +23,6 @@ volatile viveSensor V1, V2;
 volatile float xPos1, yPos1, xPos2, yPos2;
 volatile float xOld1 = 0, yOld1 = 0, xFilt1 = 0, yFilt1 = 0;
 volatile float xOld2 = 0, yOld2 = 0, xFilt2 = 0, yFilt2 = 0;
-
-using namespace BLA;
 
 #define photo1 A8
 #define laser1 23
@@ -107,8 +104,7 @@ void print_Point(Point p) {
   Serial.println(p.y);
 };
 
-void 
-rrState() {
+void print_CurrState() {
   Serial.print("CurrState ");
   Serial.print("(x,y,heading,direction,holding,lifetime): ");
   Serial.print(CurrState.x);
@@ -151,17 +147,6 @@ const Point BLCAL = { 1.33, -2.31};
 const Point BRCAL = { 15, -2.5};
 const Point TLCAL = { 1.36, 2.89 };
 const Point TRCAL = { 14.1, 2.9 };
-
-const Point BL = { 0, 0 };
-const Point BR = { BRCAL.x - BLCAL.x, BRCAL.y - BLCAL.y };
-const Point TL = { TLCAL.x - BLCAL.x, TLCAL.y - BLCAL.y };
-const Point TR = { TRCAL.x - BLCAL.x, TRCAL.y - BLCAL.y };
-const float valx = 12;
-const float valy = 6;
-const Point bl = { 0, 0 };
-const Point br = { valx, 0 };
-const Point tl = { 0, valy};
-const Point tr = { valx, valy };
 
 const float heading_threshold = 1.0; // room for error for correcting heading
 float middle;
