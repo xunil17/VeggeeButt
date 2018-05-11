@@ -2,17 +2,7 @@
 
 void plan() {
   Serial.println("Entering plan()");
-  //open_gripper_max();
   find_and_go_to_block(); // look for and get to the block
-  
-//  Block block_type = grab_and_identify();
-//  if (block_type == None) {
-//    
-//  } else if (block_type == Cylinder) {
-//    Serial.println("Cylinder!");
-//  } else {
-//    Serial.println("Cube!");
-//  }
 }
 
 void find_and_go_to_block() {
@@ -27,14 +17,14 @@ void find_and_go_to_block() {
     // move toward block unless it moves out of sight
     do {
       update_vive(); // update vive periodically for accurate coordinates
-      move_forward(120);
+      move_forward(110);
       
       // stop when block is within our grasp
       if (hit) {
         stop_robot();
         hit = false;
         move_forward(30);
-        delay(100);
+        delay(200);
         stop_robot();
         Block block_type = grab_and_identify();
         handle_block(block_type);
@@ -44,32 +34,41 @@ void find_and_go_to_block() {
   }
 }
 
+void back_up() {
+  move_backward(100);
+  delay(800);
+  stop_robot();
+}
+
 void find_and_go_to_goal() {
   go_to_target(Goal1);
   stop_robot();
   open_gripper_max();
-  delay(1000000);
+  back_up();
 }
 
 void handle_block(Block type) {
   Serial.println("Entering handle_block()");
   if (type == Cylinder) {
-//    Serial.println("Found Cylinder!");
-    handle_cylinder();
+    Serial.println("Found Cylinder!");
+    if (TeamType == Cylinder) {
+      handle_cylinder();
+    }
   } else if (type == Cube) {
-    find_and_go_to_goal();
-//    Serial.println("Found Cube!");
-//    handle_cube();
+    Serial.println("Found Cube!");
+    if (TeamType == Cube) {
+      handle_cube();
+    }
   } else {
-    Serial.println("Found None.");
+    Serial.println("Found wrong block or None.");
     open_gripper_max();
     return;
   }
 }
 
 void handle_cylinder() {
-  move_gripper(220); // tighten grip on slipper cylinder
-  
+  move_gripper(220); // tighten grip on slippery cylinder
+  find_and_go_to_goal();
 }
 
 void handle_cube() {
@@ -78,6 +77,9 @@ void handle_cube() {
 
 void go_to_target(Point target) {
   float min_u = 70;
+  if (CurrState.holding == Cylinder) {
+    min_u = 100;
+  }
   int vel = 70;
   float u;
   float kp = 0.5;
@@ -115,11 +117,14 @@ void go_to_target(Point target) {
     dist = get_distance_between_points(target,{CurrState.x,CurrState.y});
   }
   stop_robot();
-  delay(5000);
+  delay(1000);
 }
 
 void turn_to_target(Point target) {
   float min_u = 30;
+  if (CurrState.holding == Cylinder) {
+    min_u = 50;
+  }
   float u;
 //  float eint = 0;
   float kp = 0.4;

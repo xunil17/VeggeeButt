@@ -39,6 +39,10 @@ void move_forward(int vel) {
   move_right_motor(vel);
 }
 
+void move_backward(int vel) {
+  move_forward(-vel);
+}
+
 void turn_left() {
   turn_robot(-25);
 }

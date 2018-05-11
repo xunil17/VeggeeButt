@@ -1,4 +1,8 @@
-#define min_dist 120
+#define min_dist 110
+#define max_dist 300
+
+#define cylinder_grip_val 210
+#define cube_grip_val 270
 //turning the screw left makes the claw close
 //turing the screw right makes the claw open
 
@@ -16,7 +20,7 @@ void move_gripper(int dist) {
   } else {
     float dif = get_dist() - dist;
     unsigned long start_time = millis();
-    while (abs(dif) > 1 || millis() - start_time < 3000) {
+    while (abs(dif) > 4 && millis() - start_time < 4000) {
       if (dif > 0) { //positive means we need to open gripper
         gripper.write(82);
       } else {
@@ -29,20 +33,47 @@ void move_gripper(int dist) {
   }
 }
 
+// grip and identify what is being gripped
 Block grab_and_identify() {
   open_gripper_max();
   delay(1000);
-  move_gripper(210);
-  if(gripper_gripped()) {
-    return Cylinder;
-  } 
 
-  move_gripper(300);
-  if(gripper_gripped()) {
-    return Cube;
+  Block ret = None;
+  CurrState.holding = ret;
+
+  if (gripper_gripped()) {
+    // something is wrong... return None I guess...
+    return ret;
   }
 
-  return None;
+  bool gripped = false;
+
+  unsigned long start_time = millis();
+  while (1) {
+    gripper.write(98);
+    if (gripper_gripped()){ // exit if gripped
+      gripped = true;
+      break;
+    } else if (get_dist() > max_dist || millis() - start_time > 4000) { 
+      // protective measures. exit if closing too much or took too much time closing.
+      break;
+    } 
+  }
+
+  gripper.write(90);
+
+  if (!gripped) {
+    return ret;
+  }
+
+  if (get_dist() <= cylinder_grip_val + 10) {
+    ret = Cylinder;
+  } else {
+    ret = Cube;
+  }
+
+  CurrState.holding = ret;
+  return ret;
 }
 
 bool gripper_gripped() {
@@ -51,6 +82,7 @@ bool gripper_gripped() {
 
 //opens gripper to max width
 void open_gripper_max() {
+  CurrState.holding = None;
   move_gripper(min_dist); //move gripper to this position
 }
 

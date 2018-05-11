@@ -27,12 +27,6 @@ volatile float xOld2 = 0, yOld2 = 0, xFilt2 = 0, yFilt2 = 0;
 
 using namespace BLA;
 
-enum Block {
-  Cube,
-  Cylinder,
-  None
-};
-
 //enum Plan {
 //  LookForBlock,
 //  GoToBlock,
@@ -76,6 +70,12 @@ Servo gripper;
 
 #define scan_threshold 100
 
+enum Block {
+  Cube,
+  Cylinder,
+  None
+};
+
 typedef struct Point_ {
   float x;
   float y;
@@ -85,13 +85,14 @@ typedef struct State_ {
   float x;
   float y;
   float heading;
+  Block holding;
 } State;
 
 
 //typedef struct state State;
 
 // global instance representing Robot state
-volatile State CurrState = {0, 0, 0};
+volatile State CurrState = {0, 0, 0, None};
 
 void print_Point(Point p) {
   Serial.print("x: ");
@@ -101,14 +102,28 @@ void print_Point(Point p) {
 };
 
 void print_CurrState() {
-  Serial.print("STATE:");
-  Serial.print("\t");
+  Serial.print("CurrState:");
+  Serial.print("x,y,heading,holding: ");
   Serial.print(CurrState.x);
   Serial.print(", ");
   Serial.print(CurrState.y);
-  Serial.print("\theading: ");
-  Serial.println(CurrState.heading);
+  Serial.print(", ");
+  Serial.print(CurrState.heading);
+  Serial.print(", ");
+  Serial.println(Block_to_string(CurrState.holding));
 };
+
+String Block_to_string(Block b) {
+  if (b == Cylinder) {
+    return "Cylinder";
+  } else if (b == Cube) {
+    return "Cube";
+  } else {
+    return "None";
+  }
+}
+
+const Block TeamType = Cylinder;
 
 // directional notation is relative to facing the board
 //   landscape when the BLUE circle is on the LEFT
@@ -156,7 +171,7 @@ float middle;
 
 volatile bool hit = false;
 
-const Point Goal1 = {1.7, -2.38};
+const Point Goal1 = {9.67, -0.05};
 
 void setup() {
   pinMode(laser1, OUTPUT);
@@ -207,9 +222,8 @@ void setup() {
 }
 
 void loop() {
-//  test_eric();
-//    test_sean();
-  plan();
+  test_eric();
+//  test_sean();
 }
 
 void ISR_button() {
@@ -217,43 +231,31 @@ void ISR_button() {
   hit = true;
 }
 
-void test_eric() { // test eric's stuff
+void calibrate_routine() {
   update_vive();
-  
-//  turn_to_target(Goal1);
-//  Serial.print("V1: ");
-//  Serial.print(xFilt1);
-//  Serial.print(" ");
-//  Serial.print(yFilt1);
-  
-//  Serial.print(", V2: ");
-//  Serial.print(xFilt2);
-//  Serial.print(" ");
-//  Serial.println(yFilt2);
-//  print_Point(compute_transformed_coordinates(read_front()));
-//  print_CurrState();
+}
 
+void test_eric() { 
+//  plan();
+
+//  update_vive();
+//  print_Point(read_front());
+  Serial.println(Block_to_string(grab_and_identify()));
+//  back_up();
+//  delay(5000);
   delay(100);
 }
 
 
-void test_sean() { // test sean's stuff
-    Serial.println(grab_and_identify());
-    delay(1000);
-
-//  right = scan();
-//  move_left_motor(25);
-//  move_right_motor(-25);
-//  if (right >= 100) { //if it sees block
-//    while ((digitalRead(button_front1) == LOW) && (digitalRead(button_front2) == LOW)) {
-//      move_left_motor(150);
-//      move_right_motor(150);
-//    }
-//    move_left_motor(0);
-//    move_right_motor(0);
-//    delay(3000);
-//  }
-//  Serial.println(V2.useMe);
+void test_sean() {
+  if(!gripper_gripped() && get_dist() < 290) {
+    gripper.write(98);
+  } else {
+    open_gripper_max();
+    delay(5000);
+  }
+  Serial.print(digitalRead(button_gripper1));
+  Serial.println(digitalRead(button_gripper2));
 
 }
 
