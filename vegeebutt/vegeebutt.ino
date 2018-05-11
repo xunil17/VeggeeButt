@@ -205,7 +205,7 @@ void setup() {
   Serial.begin(9800);
 }
 
-const Mode mode = Test;
+const Mode mode = Run;
 
 void loop() {
   if (mode == Calibrate) {
@@ -221,7 +221,7 @@ void loop() {
 }
 
 void ISR_button_1() {
-  delayMicroseconds(2000);
+  delayMicroseconds(1000);
   if(digitalRead(button_front1) == HIGH) {
     stop_robot();
     hit = true;
@@ -232,7 +232,7 @@ void ISR_button_1() {
 }
 
 void ISR_button_2() {
-  delayMicroseconds(4000);
+  delayMicroseconds(1000);
   if(digitalRead(button_front2) == HIGH) {
     stop_robot();
     hit = true;

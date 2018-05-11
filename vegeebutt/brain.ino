@@ -169,95 +169,30 @@ void go_to_target(Point target) {
 }
 
 void turn_to_target(Point target) {
-  float kp = 0.5;
-  float ki = 0.07;
-  float kd = 0.2;
-  float error_integral, edot;
-//  if (CurrState.holding == Cylinder) {
-//    float kp = 0.7;
-//    float ki = 0.07;
-//    float kd = 0.2;
-//  }
   float u;
+  float kp = 0.5;
+  float min_u = 35;
+  if (CurrState.holding == Cylinder) {
+    kp = 0.7;
+    min_u = 50;
+  }
   float target_heading = get_heading_toward(target);
   float heading_diff = get_heading_difference(target_heading);
-  float previous = heading_diff;
-  int asize = 5;
-  bool heading_diffs_within[asize];
-  initialize_within(heading_diffs_within, asize, abs(heading_diff) < heading_diff_threshold);
-  while (!all_within(heading_diffs_within, asize)) {
+  while (abs(heading_diff) > heading_diff_threshold) {
     update_vive();
+    u = kp * heading_diff;
 
-    error_integral = error_integral + heading_diff; //error sum
-    edot = heading_diff - previous;
-    if (error_integral > EINTMAX) {
-      error_integral = EINTMAX;
-    } else if (error_integral < -EINTMAX) {
-      error_integral = -EINTMAX;
+    if (u < 0) {
+      u = u - min_u;
+    } else {
+      u = u + min_u;
     }
-
-//    u = kp * heading_diff + ki * error_integral + kd * edot;
-    u = kp * heading_diff + ki * error_integral;
-
-    //    if (u < 0) {
-    //      u = u - min_u;
-    //    } else {
-    //      u = u + min_u;
-    //    }
-    Serial.print(heading_diff);
-    Serial.print(" ");
-    Serial.print(u);
-    Serial.print(" ");
-    Serial.print(kp * heading_diff);
-    Serial.print(" ");
-    Serial.print(ki * error_integral);
-    Serial.print(" ");
-    Serial.println(kd * edot);
-//    print_array(heading_diffs_within, asize);
-//    Serial.print(" ");
-//    Serial.println(error_integral);
     turn_robot((int)u);
     target_heading = get_heading_toward(target);
-    previous = heading_diff;
     heading_diff = get_heading_difference(target_heading);
-    update_and_rotate(heading_diffs_within, asize, heading_diff);
   }
 }
 
-void update_and_rotate(bool within[], int asize, float heading_diff) {
-  for (int i = asize - 1; i > 0; i--) {
-    within[i] = within[i-1];
-  }
-
-  within[0] = abs(heading_diff) < heading_diff_threshold;
-}
-
-void initialize_within(bool within[], int asize, bool first) {
-  within[0] = first;
-  for (int i = 1; i < asize; i++) {
-    within[i] = false;
-  }
-}
-
-bool all_within(bool within[], int asize) {
-  for (int i = 0; i < asize; i++) {
-    if (!within[i]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-void print_array(bool within[], int asize) {
-  Serial.print("[");
-  for (int i = 0; i < asize; i++) {
-    Serial.print(within[i]);
-    Serial.print(", ");
-  }
-
-  Serial.println("]");
-}
 
 bool block_seen() {
   float scan_result = scan();
