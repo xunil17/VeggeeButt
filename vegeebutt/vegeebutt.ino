@@ -86,13 +86,16 @@ typedef struct State_ {
   float x;
   float y;
   float heading;
-  Direction dir;
+  Direction turn_direction;
   Block holding;
   bool resetting;
+  Direction last_center;
 } State;
 
+const Block TeamType = Cube;
+
 // global instance representing Robot state
-volatile State CurrState = {0, 0, 0, Right, None, false};
+volatile State CurrState = {0, 0, 0, Right, None, false, TeamType == Cube ? Left : Right};
 
 void print_Point(Point p) {
   Serial.print("x: ");
@@ -110,7 +113,7 @@ void print_CurrState() {
   Serial.print(", ");
   Serial.print(CurrState.heading);
   Serial.print(", ");
-  Serial.print(Direction_to_string(CurrState.dir));
+  Serial.print(Direction_to_string(CurrState.turn_direction));
   Serial.print(", ");
   Serial.print(Block_to_string(CurrState.holding));
   Serial.print(", ");
@@ -134,8 +137,6 @@ String Direction_to_string(Direction dir) {
     return "Right";
   }
 };
-
-const Block TeamType = Cube;
 
 // directional notation is relative to facing the board
 //   landscape when the center BLUE circle is on the LEFT
@@ -290,6 +291,5 @@ void test_vive() {
     update_vive();
     Serial.println(i);
     print_Point(read_back());
-  }  
+  }
 }
-

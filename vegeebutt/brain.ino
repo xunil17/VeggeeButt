@@ -8,7 +8,7 @@ void plan() {
 }
 
 void find_and_go_to_block() {
-  if (CurrState.dir == Left) {
+  if (CurrState.turn_direction == Left) {
     turn_left();
   } else {
     turn_right();
@@ -45,10 +45,10 @@ void find_and_go_to_block() {
 }
 
 void swap_dir() {
-  if (CurrState.dir == Left) {
-    CurrState.dir = Right;
+  if (CurrState.turn_direction == Left) {
+    CurrState.turn_direction = Right;
   } else {
-    CurrState.dir = Left;
+    CurrState.turn_direction = Left;
   }
 }
 
@@ -68,6 +68,17 @@ bool check_boundary_and_maybe_reset() {
 
 void go_to_center() {
   find_and_go_to_target(get_closest_center());
+}
+
+void go_to_center_after_dumpster() {
+  // for dumpsters, switch which center to go to
+  if (CurrState.last_center == Left) {
+    CurrState.last_center = Right;
+    find_and_go_to_target(CR);
+  } else {
+    CurrState.last_center = Left;
+    find_and_go_to_target(CL);
+  }
 }
 
 void back_up() {
@@ -92,7 +103,7 @@ void find_and_go_to_dumpster() {
   find_and_go_to_target(get_closest_dumpster());
   open_gripper_max();
   back_up();
-  go_to_center();
+  go_to_center_after_dumpster();
 }
 
 void handle_block(Block type) {
