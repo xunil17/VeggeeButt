@@ -101,7 +101,7 @@ typedef struct LocationRecording_ {
   unsigned long t;
 } LocationRecording;
 
-const Block TeamType = Cylinder;
+const Block TeamType = Cube;
 
 // global instance representing Robot state
 volatile State CurrState = {0, 0, 0, Right, None, false, TeamType == Cube ? Left : Right, TeamType == Cube ? Left : Right};
