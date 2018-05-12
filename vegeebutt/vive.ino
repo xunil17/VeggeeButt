@@ -15,7 +15,7 @@ void update_vive() {
     V1.useMe = 0;
     // calculate the position and filter it
     xPos1 = tan((V1.vertAng - LIGHTHOUSEANGLE) * DEG_TO_RADIAN) * LIGHTHOUSEHEIGHT;
-    yPos1 = LIGHTHOUSEHEIGHT / cos((V1.vertAng - LIGHTHOUSEANGLE) * DEG_TO_RADIAN)  * tan((V1.horzAng - 90.0) * DEG_TO_RADIAN);
+   yPos1 = LIGHTHOUSEHEIGHT / cos((V1.vertAng - LIGHTHOUSEANGLE) * DEG_TO_RADIAN)  * tan((V1.horzAng - 90.0) * DEG_TO_RADIAN);
     xFilt1 = xOld1 * 0.5 + xPos1 * 0.5; // filter
     yFilt1 = yOld1 * 0.5 + yPos1 * 0.5; // filter
     xOld1 = xFilt1; // remember for next loop

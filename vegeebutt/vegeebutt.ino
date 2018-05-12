@@ -6,8 +6,8 @@
 #include <avr/interrupt.h>
 #define DEG_PER_US 0.0216 // equal to (180 deg) / (8333 us)
 #define DEG_TO_RADIAN 0.0174533 // pi/180
-#define LIGHTHOUSEHEIGHT 3.5 // in feet
-#define LIGHTHOUSEANGLE 33 // in degrees
+#define LIGHTHOUSEHEIGHT 56.0/12.0 // in feet
+#define LIGHTHOUSEANGLE 21.0 // in degrees
 
 // structure to store the sensor data
 typedef struct {
@@ -151,19 +151,19 @@ String Direction_to_string(Direction dir) {
 // directional notation is relative to facing the board
 //   landscape when the center BLUE circle is on the LEFT
 // calibration globals:
-const Point BLCAL = { 1.28, -2.37};
-const Point BRCAL = { 8.68, -1.00};
-const Point TLCAL = { 1.2, 2.68 };
-const Point TRCAL = { 8.60, 2.12 };
+const Point BLCAL = { 4.0, -2.55};
+const Point BRCAL = { 25.5, -3.9 };
+const Point TLCAL = { 3.95, 2.95 };
+const Point TRCAL = { 24.3, 3.84};
 
 // dumpsters
-const Point DBOT = { 5.50, -1.63 };
-const Point DTOP = { 5.43, 2.10 };
+const Point DBOT = { 12.2, -3.0 };
+const Point DTOP = { 11.8, 3.2 };
 
 // centers
 // 1/3 and 2/3 distance between left and right averaged sides
-const Point CL = { 2.35, 0.3 };
-const Point CR = { 7.83, 0.55 };
+const Point CL = { 6.08, 0.11 };
+const Point CR = { 20.7, 0.14 };
 
 volatile bool hit = false;
 
@@ -262,7 +262,7 @@ void go() {
 // instead of commenting and uncommenting, just write new functions starting
 // with `test_` if you think you will reuse them.
 void test() {
-  test_sensor();
+  test_within_boundary();
 }
 
 void test_get_closest_goal() {
