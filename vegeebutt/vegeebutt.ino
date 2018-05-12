@@ -7,7 +7,7 @@
 #define DEG_PER_US 0.0216 // equal to (180 deg) / (8333 us)
 #define DEG_TO_RADIAN 0.0174533 // pi/180
 #define LIGHTHOUSEHEIGHT 56.0/12.0 // in feet
-#define LIGHTHOUSEANGLE 21.0 // in degrees
+#define LIGHTHOUSEANGLE 30.0 // in degrees
 
 // structure to store the sensor data
 typedef struct {
@@ -151,19 +151,19 @@ String Direction_to_string(Direction dir) {
 // directional notation is relative to facing the board
 //   landscape when the center BLUE circle is on the LEFT
 // calibration globals:
-const Point BLCAL = { 4.0, -2.55};
-const Point BRCAL = { 25.5, -3.9 };
-const Point TLCAL = { 3.95, 2.95 };
-const Point TRCAL = { 24.3, 3.84};
+const Point BLCAL = { 2.82, -2.30 };
+const Point BRCAL = { 13.2, -2.10 };
+const Point TLCAL = { 2.85, 2.51 };
+const Point TRCAL = { 12.8, 2.12 };
 
 // dumpsters
-const Point DBOT = { 12.2, -3.0 };
-const Point DTOP = { 11.8, 3.2 };
+const Point DBOT = { 8.0, -2.10 };
+const Point DTOP = { 7.90, 2.30 };
 
 // centers
 // 1/3 and 2/3 distance between left and right averaged sides
-const Point CL = { 6.08, 0.11 };
-const Point CR = { 20.7, 0.14 };
+const Point CL = { 4.39, 0.11 };
+const Point CR = { 11.5, 0.14 };
 
 volatile bool hit = false;
 
