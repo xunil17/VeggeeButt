@@ -37,31 +37,62 @@ Point get_closest_point(Point p1, Point p2) {
   }
 }
 
-bool within_boundary() {
+// bool within_boundary() { // using nearest
+//   Point c = {CurrState.x, CurrState.y};
+//   Point closest = get_closest_calibrated_point();
+//   bool xokay = false;
+//   bool yokay = false;
+//
+//   // check y
+//   // if closer to bottom, current y needs to be greater than closest.y
+//   if (closest == BLCAL || closest == BRCAL || closest == DBOT) {
+//     yokay = c.y + y_boundary_offset > closest.y;
+//   } else {
+//     yokay = c.y - y_boundary_offset < closest.y;
+//   }
+//
+//   // check x
+//   // if closer to left, current x needs to be greater than closest.x
+//   if (closest == BLCAL || closest == TLCAL) {
+//     xokay = c.x + x_boundary_offset > closest.x;
+//   } else if (closest == BRCAL || closest == TRCAL) {
+//     xokay = c.x - x_boundary_offset < closest.x;
+//   } else {
+//     xokay = true;
+//   }
+//
+//   return xokay && yokay;
+// }
+
+bool within_boundary() { // using interpolation
   Point c = {CurrState.x, CurrState.y};
   Point closest = get_closest_calibrated_point();
-  bool xokay = false;
-  bool yokay = false;
-
-  // check y
-  // if closer to bottom, current y needs to be greater than closest.y
-  if (closest == BLCAL || closest == BRCAL || closest == DBOT) {
-    yokay = c.y + y_boundary_offset > closest.y;
-  } else {
-    yokay = c.y - y_boundary_offset < closest.y;
+  Point L = BLCAL;
+  Point M = DBOT;
+  Point R = BRCAL;
+  if (closest == TLCAL || closest == TRCAL || closest == DTOP) {
+    L = TLCAL;
+    M = DTOP;
+    R = TRCAL;
   }
 
-  // check x
-  // if closer to left, current x needs to be greater than closest.x
-  if (closest == BLCAL || closest == TLCAL) {
-    xokay = c.x + x_boundary_offset > closest.x;
-  } else if (closest == BRCAL || closest == TRCAL) {
-    xokay = c.x - x_boundary_offset < closest.x;
-  } else {
-    xokay = true;
+  if (c.x < L.x || c.x > R.x) {
+    return false;
   }
 
-  return xokay && yokay;
+  float yboundary;
+
+  if (c.x < M.x) {
+    yboundary = ((M.y - L.y) / (M.x - L.x)) * c.x + L.y;
+  } else {
+     yboundary = ((R.y - M.y) / (R.x - M.x)) * (c.x - M.x) + M.y ;
+  }
+
+  if (L == TLCAL) {
+    return c.y < yboundary;
+  } else {
+    return c.y > yboundary;
+  }
 }
 
 Point get_closest_calibrated_point() {

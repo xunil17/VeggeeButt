@@ -181,7 +181,7 @@ void go_to_target(Point target) {
     dist = get_distance_between_points(target, {CurrState.x, CurrState.y});
   }
   stop_robot();
-  delay(1000);
+  delay(200);
 }
 
 void turn_to_target(Point target) {

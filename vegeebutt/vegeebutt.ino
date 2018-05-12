@@ -56,7 +56,7 @@ Servo gripper;
 
 #define scan_threshold 100
 
-#define button_isr_delay 100
+#define button_isr_delay 200
 
 enum Block {
   Cube,
@@ -265,7 +265,7 @@ void go() {
 // instead of commenting and uncommenting, just write new functions starting
 // with `test_` if you think you will reuse them.
 void test() {
-  test_bumper();
+  test_within_boundary();
 }
 
 void test_get_closest_goal() {
