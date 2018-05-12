@@ -1,4 +1,4 @@
-#define turn_speed 26 
+#define turn_speed (TeamType == Cube ? 26 : 30)
 
 
 //drives the left motor forward or backward (-255 to 255)
