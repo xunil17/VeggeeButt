@@ -65,6 +65,14 @@ bool within_boundary() {
   return xokay && yokay;
 }
 
+Point get_closest_calibrated_point() {
+  Point calibrated_points[] = { BLCAL, BRCAL, TLCAL, TRCAL, DBOT, DTOP };
+  int cpsize = 6;
+  for (int i = 0; i < cpsize; i++) {
+    
+  }
+}
+
 // This function returns the difference between the target_heading
 // and VBot's current heading. Negative means the target_heading is to
 // the left and positive means the target_heading is to the right.

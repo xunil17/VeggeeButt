@@ -35,18 +35,24 @@ void update_vive() {
   }
 
   // unstuck ourselves
-  if (get_distance_between_points({CurrState.x, CurrState.y}, {PreviousCheckpoint.x, PreviousCheckpoint.y}) > stuck_distance_threshold) {
-    PreviousCheckpoint.x = CurrState.x;
-    PreviousCheckpoint.y = CurrState.y;
-    PreviousCheckpoint.t = millis();
-  } else if (millis() - PreviousCheckpoint.t > stuck_time_threshold) {
-    stop_everything();
-    back_up();
-    open_gripper_max();
-    turn_right();
-    delay(random(300,800));
-    stop_robot();
-    CurrState.resetting = true;
+  if (mode == Run) {
+    if (get_distance_between_points({CurrState.x, CurrState.y}, {PreviousCheckpoint.x, PreviousCheckpoint.y}) > stuck_distance_threshold) {
+      PreviousCheckpoint.x = CurrState.x;
+      PreviousCheckpoint.y = CurrState.y;
+      PreviousCheckpoint.t = millis();
+    } else if (millis() - PreviousCheckpoint.t > stuck_time_threshold) {
+      stop_everything();
+      open_gripper_max();
+      if (random(2) == 0) {
+        turn_right();
+      } else {
+        turn_left();
+      }
+      delay(random(300, 800));
+      open_gripper_max();
+      stop_robot();
+      CurrState.resetting = true;
+    }
   }
 
 

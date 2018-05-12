@@ -148,14 +148,16 @@ String Direction_to_string(Direction dir) {
 // directional notation is relative to facing the board
 //   landscape when the center BLUE circle is on the LEFT
 // calibration globals:
-const Point BLCAL = { 1.33, -2.31};
-const Point BRCAL = { 15, -2.5};
-const Point TLCAL = { 1.36, 2.89 };
-const Point TRCAL = { 14.1, 2.9 };
+const Point BLCAL = { 1.28, -2.37};
+const Point BRCAL = { 8.68, -1.00};
+const Point TLCAL = { 1.2, 2.68 };
+const Point TRCAL = { 8.60, 2.12 };
 
 // dumpsters
-const Point DBOT = { (BLCAL.x + BRCAL.x) / 2, BLCAL.y > BRCAL.y ? BLCAL.y : BRCAL.y };
-const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCAL.y };
+//const Point DBOT = { (BLCAL.x + BRCAL.x) / 2, BLCAL.y > BRCAL.y ? BLCAL.y : BRCAL.y };
+//const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCAL.y };
+const Point DBOT = { 5.50, -1.63 };
+const Point DTOP = { 5.43, 2.10 };
 
 // centers
 // 1/3 and 2/3 distance between left and right averaged sides
@@ -214,8 +216,8 @@ void setup() {
 }
 
 //const Mode mode = Test;
-//const Mode mode = Calibrate;
-const Mode mode = Run;
+const Mode mode = Calibrate;
+//const Mode mode = Run;
 
 void loop() {
   if (mode == Calibrate) {
@@ -259,7 +261,7 @@ void go() {
 // instead of commenting and uncommenting, just write new functions starting
 // with `test_` if you think you will reuse them.
 void test() {
-  test_grip_and_identify();
+  test_within_boundary();
 }
 
 void test_get_closest_goal() {
@@ -285,6 +287,9 @@ void test_bumper() {
 void test_print_dumpsters() {
   print_Point(DTOP);
   print_Point(DBOT);
+  print_Point(CL);
+  print_Point(CR);
+  print_Point(read_front());
 }
 
 void test_vive() {
