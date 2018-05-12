@@ -1,5 +1,5 @@
 #define heading_diff_threshold 5
-#define base_forward_speed 110
+#define base_forward_speed 130
 #define base_cube_forward_speed 140
 #define base_cylinder_forward_speed 220
 
@@ -32,11 +32,11 @@ void find_and_go_to_block() {
       move_forward(base_forward_speed);
 
       // stop when block is within our grasp
-      if (hit && block_seen()) {
+      if (hit) {
         stop_robot();
         hit = false;
         move_forward(30);
-        delay(500);
+        delay(400);
         stop_robot();
         Block block_type = grab_and_identify();
         handle_block(block_type);

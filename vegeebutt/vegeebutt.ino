@@ -56,6 +56,8 @@ Servo gripper;
 
 #define scan_threshold 100
 
+#define button_isr_delay 100
+
 enum Block {
   Cube,
   Cylinder,
@@ -235,18 +237,18 @@ void loop() {
 }
 
 void ISR_button_1() {
-  delayMicroseconds(400);
+  delayMicroseconds(button_isr_delay);
   if(digitalRead(button_front1) == HIGH) {
-    stop_robot();
     hit = true;
+//    Serial.println("hit");
   }
 }
 
 void ISR_button_2() {
-  delayMicroseconds(400);
+  delayMicroseconds(button_isr_delay);
   if(digitalRead(button_front2) == HIGH) {
-    stop_robot();
     hit = true;
+//    Serial.println("hit");
   }
 }
 
@@ -263,7 +265,7 @@ void go() {
 // instead of commenting and uncommenting, just write new functions starting
 // with `test_` if you think you will reuse them.
 void test() {
-  test_within_boundary();
+  test_bumper();
 }
 
 void test_get_closest_goal() {
