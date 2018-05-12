@@ -21,6 +21,7 @@ void find_and_go_to_block() {
     // move toward block unless it moves out of sight
     do {
       update_vive(); // update vive periodically for accurate coordinates
+      check_time();
       if (check_boundary_and_maybe_reset()) {
         return;
       }
@@ -159,6 +160,7 @@ void go_to_target(Point target) {
   float dist = get_distance_between_points(target, {CurrState.x, CurrState.y});
   while (abs(dist) > 0.6) {
     update_vive();
+    check_time();
 
     u = kp * heading_diff;
     if (abs(heading_diff) > 15) {
@@ -191,6 +193,8 @@ void turn_to_target(Point target) {
   float heading_diff = get_heading_difference(target_heading);
   while (abs(heading_diff) > heading_diff_threshold) {
     update_vive();
+    check_time();
+    
     u = kp * heading_diff;
 
     if (u < 0) {

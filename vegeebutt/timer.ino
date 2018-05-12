@@ -1,5 +1,5 @@
 #define stop_early 1000
-#define competition_length 20000 // 3 * 60 * 1000 = 180000
+#define competition_length 5000 // 3 * 60 * 1000 = 180000
 
 void check_time() {
   unsigned long current_time = millis();

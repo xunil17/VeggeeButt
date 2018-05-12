@@ -244,7 +244,7 @@ void calibrate_routine() {
 
 void go() {
   plan();
-//  check_time();
+  check_time();
 }
 
 // instead of commenting and uncommenting, just write new functions starting
