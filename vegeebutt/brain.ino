@@ -135,11 +135,11 @@ void handle_cube() {
 }
 
 void go_to_target(Point target) {
-  int vel = 110;
+  int vel = 70;
   if (CurrState.holding == Cylinder) {
-    vel = 200;
+    vel = 70;
   } else if (CurrState.holding == Cube) {
-    vel = 140;
+    vel = 70;
   }
   float u;
   float kp = 0.5;

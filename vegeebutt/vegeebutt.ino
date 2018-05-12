@@ -151,8 +151,8 @@ const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCA
 
 // centers
 // 1/3 and 2/3 distance between left and right averaged sides
-const Point CL = { (((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 2) / 3, (BLCAL.y + TLCAL.y) / 2 };
-const Point CR = { ((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 3, (BRCAL.y + TRCAL.y) / 2 };
+const Point CL = { ((BLCAL.x + TLCAL.x) / 2) + ((((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 2) / 3), (BLCAL.y + TLCAL.y) / 2 };
+const Point CR = { ((BLCAL.x + TLCAL.x) / 2) + (((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 3), (BRCAL.y + TRCAL.y) / 2 };
 
 volatile bool hit = false;
 
@@ -225,10 +225,7 @@ void ISR_button_1() {
   if(digitalRead(button_front1) == HIGH) {
     stop_robot();
     hit = true;
-  } else {
-    hit = false;
   }
-
 }
 
 void ISR_button_2() {
@@ -236,8 +233,6 @@ void ISR_button_2() {
   if(digitalRead(button_front2) == HIGH) {
     stop_robot();
     hit = true;
-  } else {
-    hit = false;
   }
 }
 
@@ -254,9 +249,11 @@ void go() {
 // instead of commenting and uncommenting, just write new functions starting
 // with `test_` if you think you will reuse them.
 void test() {
-  turn_to_target(BRCAL);
-  stop_robot();
-  delay(5000);
+  test_vive();
+//  turn_to_target(BRCAL);
+//  stop_robot();
+//  delay(5000);
+
 }
 
 void test_get_closest_goal() {
@@ -283,3 +280,16 @@ void test_print_dumpsters() {
   print_Point(DTOP);
   print_Point(DBOT);
 }
+
+void test_vive() {
+  int i = 0;
+  for(i = 0; i < 150; i++) {
+    move_left_motor(i);
+    move_right_motor(i);
+    delay(200);
+    update_vive();
+    Serial.println(i);
+    print_Point(read_back());
+  }  
+}
+
