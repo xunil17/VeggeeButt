@@ -20,7 +20,14 @@ Point get_closest_goal() {
 }
 
 Point get_closest_dumpster() {
-  return get_closest_point(DTOP, DBOT);
+//  return get_closest_point(DTOP, DBOT);
+  if (CurrState.last_dumpster == Left) {
+    CurrState.last_dumpster = Right;
+    return DBOT;
+  } else {
+    CurrState.last_dumpster = Left;
+    return DTOP;
+  }
 }
 
 Point get_closest_center() {

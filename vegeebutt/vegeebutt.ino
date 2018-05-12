@@ -56,7 +56,7 @@ Servo gripper;
 
 #define scan_threshold 100
 
-#define button_isr_delay 200
+#define button_isr_delay 300
 
 enum Block {
   Cube,
@@ -92,6 +92,7 @@ typedef struct State_ {
   Block holding;
   bool resetting;
   Direction last_center;
+  Direction last_dumpster; // let Left be "Top" and Right be "Bottom"s
 } State;
 
 typedef struct LocationRecording_ {
@@ -103,7 +104,7 @@ typedef struct LocationRecording_ {
 const Block TeamType = Cube;
 
 // global instance representing Robot state
-volatile State CurrState = {0, 0, 0, Right, None, false, TeamType == Cube ? Left : Right};
+volatile State CurrState = {0, 0, 0, Right, None, false, TeamType == Cube ? Left : Right, TeamType == Cube ? Left : Right};
 volatile LocationRecording PreviousCheckpoint = {0, 0, 0};
 
 void print_Point(Point p) {
@@ -156,15 +157,11 @@ const Point TLCAL = { 1.2, 2.68 };
 const Point TRCAL = { 8.60, 2.12 };
 
 // dumpsters
-//const Point DBOT = { (BLCAL.x + BRCAL.x) / 2, BLCAL.y > BRCAL.y ? BLCAL.y : BRCAL.y };
-//const Point DTOP = { (TLCAL.x + TRCAL.x) / 2, TLCAL.y < TRCAL.y ? TLCAL.y : TRCAL.y };
 const Point DBOT = { 5.50, -1.63 };
 const Point DTOP = { 5.43, 2.10 };
 
 // centers
 // 1/3 and 2/3 distance between left and right averaged sides
-//const Point CL = { ((BLCAL.x + TLCAL.x) / 2) + ((((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 2) / 3), (BLCAL.y + TLCAL.y) / 2 };
-//const Point CR = { ((BLCAL.x + TLCAL.x) / 2) + (((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 3), (BRCAL.y + TRCAL.y) / 2 };
 const Point CL = { 2.35, 0.3 };
 const Point CR = { 7.83, 0.55 };
 
@@ -220,8 +217,8 @@ void setup() {
 }
 
 //const Mode mode = Test;
-//const Mode mode = Calibrate;
-const Mode mode = Run;
+const Mode mode = Calibrate;
+//const Mode mode = Run;
 
 void loop() {
   if (mode == Calibrate) {
@@ -265,7 +262,7 @@ void go() {
 // instead of commenting and uncommenting, just write new functions starting
 // with `test_` if you think you will reuse them.
 void test() {
-  test_within_boundary();
+  test_sensor();
 }
 
 void test_get_closest_goal() {
@@ -274,6 +271,10 @@ void test_get_closest_goal() {
   print_Point(read_front());
   Serial.println();
   delay(250);
+}
+
+void test_sensor() {
+ Serial.println(scan());
 }
 
 void test_within_boundary() {

@@ -1,4 +1,4 @@
-#define turn_speed 30
+#define turn_speed 28
 
 
 //drives the left motor forward or backward (-255 to 255)
