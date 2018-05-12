@@ -98,7 +98,7 @@ typedef struct LocationRecording_ {
   unsigned long t;
 } LocationRecording;
 
-const Block TeamType = Cylinder;
+const Block TeamType = Cube;
 
 // global instance representing Robot state
 volatile State CurrState = {0, 0, 0, Right, None, false, TeamType == Cube ? Left : Right};
@@ -161,8 +161,10 @@ const Point DTOP = { 5.43, 2.10 };
 
 // centers
 // 1/3 and 2/3 distance between left and right averaged sides
-const Point CL = { ((BLCAL.x + TLCAL.x) / 2) + ((((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 2) / 3), (BLCAL.y + TLCAL.y) / 2 };
-const Point CR = { ((BLCAL.x + TLCAL.x) / 2) + (((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 3), (BRCAL.y + TRCAL.y) / 2 };
+//const Point CL = { ((BLCAL.x + TLCAL.x) / 2) + ((((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 2) / 3), (BLCAL.y + TLCAL.y) / 2 };
+//const Point CR = { ((BLCAL.x + TLCAL.x) / 2) + (((BRCAL.x - BLCAL.x) + (TRCAL.x - TLCAL.x)) / 3), (BRCAL.y + TRCAL.y) / 2 };
+const Point CL = { 2.35, 0.3 };
+const Point CR = { 7.83, 0.55 };
 
 volatile bool hit = false;
 
@@ -216,8 +218,8 @@ void setup() {
 }
 
 //const Mode mode = Test;
-const Mode mode = Calibrate;
-//const Mode mode = Run;
+//const Mode mode = Calibrate;
+const Mode mode = Run;
 
 void loop() {
   if (mode == Calibrate) {
@@ -233,7 +235,7 @@ void loop() {
 }
 
 void ISR_button_1() {
-  delayMicroseconds(500);
+  delayMicroseconds(400);
   if(digitalRead(button_front1) == HIGH) {
     stop_robot();
     hit = true;
@@ -241,7 +243,7 @@ void ISR_button_1() {
 }
 
 void ISR_button_2() {
-  delayMicroseconds(500);
+  delayMicroseconds(400);
   if(digitalRead(button_front2) == HIGH) {
     stop_robot();
     hit = true;
@@ -308,4 +310,3 @@ void test_grip_and_identify() {
   Block b = grab_and_identify();
   Serial.println(Block_to_string(b));
 }
-

@@ -3,6 +3,8 @@
 #define base_cube_forward_speed 140
 #define base_cylinder_forward_speed 220
 
+#define distance_threshold 0.2
+
 void plan() {
   CurrState.resetting = false;
   find_and_go_to_block(); // look for and get to the block
@@ -159,7 +161,7 @@ void go_to_target(Point target) {
   float target_heading = get_heading_toward(target);
   float heading_diff = get_heading_difference(target_heading);
   float dist = get_distance_between_points(target, {CurrState.x, CurrState.y});
-  while (abs(dist) > 0.6) {
+  while (abs(dist) > distance_threshold) {
     update_vive();
     check_time();
 
@@ -194,7 +196,7 @@ void turn_to_target(Point target) {
   while (abs(heading_diff) > heading_diff_threshold) {
     update_vive();
     check_time();
-    
+
     u = kp * heading_diff;
 
     if (u < 0) {

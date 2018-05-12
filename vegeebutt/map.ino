@@ -39,16 +39,13 @@ Point get_closest_point(Point p1, Point p2) {
 
 bool within_boundary() {
   Point c = {CurrState.x, CurrState.y};
-  Point closest_b = get_closest_point(BLCAL, BRCAL);
-  Point closest_t = get_closest_point(TLCAL, TRCAL);
-  Point closest = get_closest_point(closest_b, closest_t);
-
+  Point closest = get_closest_calibrated_point();
   bool xokay = false;
   bool yokay = false;
 
   // check y
   // if closer to bottom, current y needs to be greater than closest.y
-  if (closest == BLCAL || closest == BRCAL) {
+  if (closest == BLCAL || closest == BRCAL || closest == DBOT) {
     yokay = c.y + y_boundary_offset > closest.y;
   } else {
     yokay = c.y - y_boundary_offset < closest.y;
@@ -58,19 +55,33 @@ bool within_boundary() {
   // if closer to left, current x needs to be greater than closest.x
   if (closest == BLCAL || closest == TLCAL) {
     xokay = c.x + x_boundary_offset > closest.x;
-  } else {
+  } else if (closest == BRCAL || closest == TRCAL) {
     xokay = c.x - x_boundary_offset < closest.x;
+  } else {
+    xokay = true;
   }
 
   return xokay && yokay;
 }
 
 Point get_closest_calibrated_point() {
+  Point curr = {CurrState.x, CurrState.y};
   Point calibrated_points[] = { BLCAL, BRCAL, TLCAL, TRCAL, DBOT, DTOP };
   int cpsize = 6;
+  float differences[cpsize];
   for (int i = 0; i < cpsize; i++) {
-    
+    differences[i] = get_distance_between_points(curr, calibrated_points[i]);
   }
+
+  int min_index = 0;
+
+  for (int i = 0; i < cpsize; i++) {
+    if (differences[i] < differences[min_index]) {
+      min_index = i;
+    }
+  }
+
+  return calibrated_points[min_index];
 }
 
 // This function returns the difference between the target_heading
