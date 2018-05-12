@@ -92,10 +92,17 @@ typedef struct State_ {
   Direction last_center;
 } State;
 
+typedef struct LocationRecording_ {
+  float x;
+  float y;
+  unsigned long t;
+} LocationRecording;
+
 const Block TeamType = Cylinder;
 
 // global instance representing Robot state
 volatile State CurrState = {0, 0, 0, Right, None, false, TeamType == Cube ? Left : Right};
+volatile LocationRecording PreviousCheckpoint = {0, 0, 0};
 
 void print_Point(Point p) {
   Serial.print("x: ");

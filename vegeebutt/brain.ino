@@ -187,7 +187,6 @@ void turn_to_target(Point target) {
   float kp = 0.5;
   float min_u = 35;
   if (CurrState.holding == Cylinder) {
-    kp = 0.7;
     min_u = 40;
   }
   float target_heading = get_heading_toward(target);

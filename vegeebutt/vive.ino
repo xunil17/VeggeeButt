@@ -1,4 +1,6 @@
 // BL, BR, TL, TR
+#define stuck_distance_threshold 0.2
+#define stuck_time_threshold 10000
 
 Point read_front() {
   return {xFilt2, yFilt2};
@@ -31,6 +33,22 @@ void update_vive() {
     xOld2 = xFilt2; // remember for next loop
     yOld2 = yFilt2; // remember for next loop
   }
+
+  // unstuck ourselves
+  if (get_distance_between_points({CurrState.x, CurrState.y}, {PreviousCheckpoint.x, PreviousCheckpoint.y}) > stuck_distance_threshold) {
+    PreviousCheckpoint.x = CurrState.x;
+    PreviousCheckpoint.y = CurrState.y;
+    PreviousCheckpoint.t = millis();
+  } else if (millis() - PreviousCheckpoint.t > stuck_time_threshold) {
+    stop_everything();
+    back_up();
+    open_gripper_max();
+    turn_right();
+    delay(random(300,800));
+    stop_robot();
+    CurrState.resetting = true;
+  }
+
 
   // update our Current State
   Point back = read_back();
