@@ -46,6 +46,7 @@ void find_and_go_to_block() {
       }
     } while (block_seen());
   }
+  
 }
 
 void swap_dir() {

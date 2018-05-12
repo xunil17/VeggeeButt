@@ -217,8 +217,8 @@ void setup() {
 }
 
 //const Mode mode = Test;
-const Mode mode = Calibrate;
-//const Mode mode = Run;
+//const Mode mode = Calibrate;
+const Mode mode = Run;
 
 void loop() {
   if (mode == Calibrate) {
