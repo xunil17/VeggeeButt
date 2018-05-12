@@ -92,7 +92,7 @@ typedef struct State_ {
   Direction last_center;
 } State;
 
-const Block TeamType = Cube;
+const Block TeamType = Cylinder;
 
 // global instance representing Robot state
 volatile State CurrState = {0, 0, 0, Right, None, false, TeamType == Cube ? Left : Right};
@@ -189,7 +189,7 @@ void setup() {
   gripper.attach(gripper_pwm);
   open_gripper_max();
 
-    // vive
+  // vive
   V1.horzAng = 0;
   V1.vertAng = 0;
   V1.useMe = 0;
@@ -224,7 +224,7 @@ void loop() {
 }
 
 void ISR_button_1() {
-  delayMicroseconds(1000);
+  delayMicroseconds(500);
   if(digitalRead(button_front1) == HIGH) {
     stop_robot();
     hit = true;
@@ -232,7 +232,7 @@ void ISR_button_1() {
 }
 
 void ISR_button_2() {
-  delayMicroseconds(1000);
+  delayMicroseconds(500);
   if(digitalRead(button_front2) == HIGH) {
     stop_robot();
     hit = true;
@@ -252,11 +252,7 @@ void go() {
 // instead of commenting and uncommenting, just write new functions starting
 // with `test_` if you think you will reuse them.
 void test() {
-  test_vive();
-//  turn_to_target(BRCAL);
-//  stop_robot();
-//  delay(5000);
-
+  test_grip_and_identify();
 }
 
 void test_get_closest_goal() {
@@ -295,3 +291,9 @@ void test_vive() {
     print_Point(read_front());
   }
 }
+
+void test_grip_and_identify() {
+  Block b = grab_and_identify();
+  Serial.println(Block_to_string(b));
+}
+

@@ -1,6 +1,7 @@
-#define EINTMAX 1000
-
 #define heading_diff_threshold 5
+#define base_forward_speed 110
+#define base_cube_forward_speed 140
+#define base_cylinder_forward_speed 220
 
 void plan() {
   CurrState.resetting = false;
@@ -26,14 +27,14 @@ void find_and_go_to_block() {
         return;
       }
 
-      move_forward(110);
+      move_forward(base_forward_speed);
 
       // stop when block is within our grasp
       if (hit && block_seen()) {
         stop_robot();
         hit = false;
         move_forward(30);
-        delay(200);
+        delay(500);
         stop_robot();
         Block block_type = grab_and_identify();
         handle_block(block_type);
@@ -147,11 +148,11 @@ void handle_cube() {
 }
 
 void go_to_target(Point target) {
-  int vel = 70;
+  int vel = base_forward_speed;
   if (CurrState.holding == Cylinder) {
-    vel = 70;
+    vel = base_cylinder_forward_speed;
   } else if (CurrState.holding == Cube) {
-    vel = 70;
+    vel = base_cube_forward_speed;
   }
   float u;
   float kp = 0.5;
@@ -187,7 +188,7 @@ void turn_to_target(Point target) {
   float min_u = 35;
   if (CurrState.holding == Cylinder) {
     kp = 0.7;
-    min_u = 50;
+    min_u = 40;
   }
   float target_heading = get_heading_toward(target);
   float heading_diff = get_heading_difference(target_heading);

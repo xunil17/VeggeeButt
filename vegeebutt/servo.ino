@@ -47,7 +47,7 @@ void gripper_stop() {
 
 void gripper_tighten_briefly() {
   gripper_tighten();
-  delay(200);
+  delay(300);
   gripper_stop();
 }
 
@@ -84,7 +84,7 @@ Block grab_and_identify() {
     return ret; // None
   }
 
-  if (get_dist() <= cylinder_grip_val + 10) {
+  if (get_dist() <= cylinder_grip_val + 5) {
     ret = Cylinder;
   } else {
     ret = Cube;
