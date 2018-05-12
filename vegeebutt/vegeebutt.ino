@@ -52,7 +52,7 @@ Servo gripper;
 #define button_gripper2 10
 
 #define Vive1PIN 15
-#define Vive2PIN 14
+#define Vive2PIN 17 // formerly 14
 
 #define scan_threshold 100
 
@@ -206,6 +206,8 @@ void setup() {
   Serial.begin(9800);
 }
 
+//const Mode mode = Test;
+//const Mode mode = Calibrate;
 const Mode mode = Run;
 
 void loop() {
@@ -290,6 +292,6 @@ void test_vive() {
     delay(200);
     update_vive();
     Serial.println(i);
-    print_Point(read_back());
+    print_Point(read_front());
   }
 }
