@@ -56,7 +56,7 @@ Servo gripper;
 
 #define scan_threshold 100
 
-#define button_isr_delay 300
+#define button_isr_delay 400
 
 enum Block {
   Cube,
@@ -101,7 +101,7 @@ typedef struct LocationRecording_ {
   unsigned long t;
 } LocationRecording;
 
-const Block TeamType = Cube;
+const Block TeamType = Cylinder;
 
 // global instance representing Robot state
 volatile State CurrState = {0, 0, 0, Right, None, false, TeamType == Cube ? Left : Right, TeamType == Cube ? Left : Right};
